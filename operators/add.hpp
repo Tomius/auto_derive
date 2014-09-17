@@ -14,26 +14,27 @@ class Add : public Expression<Add<Lhs, Rhs>> {
   const Rhs& rhs;
 
  public:
-  Add(const Lhs& lhs, const Rhs& rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Add(const Lhs& lhs, const Rhs& rhs) : lhs(lhs), rhs(rhs) {}
 
-  auto operator()() const -> decltype(lhs() + rhs()) { return lhs() + rhs(); }
+  //constexpr auto operator()() const -> decltype(lhs() + rhs()) { return lhs() + rhs(); }
 
   // if both args have constant gradient, then the result is constant too
-  template<typename T, const char *str>
-  auto gradient(const Variable<T, str>& v) const
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const
       -> typename std::enable_if<
-      std::is_same<T, decltype(lhs.gradient(v))>::value
-      && std::is_same<T, decltype(rhs.gradient(v))>::value, T>::type {
-    return lhs.gradient(v) + rhs.gradient(v);
+      std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value
+      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value, T>::type {
+    return lhs.template gradient<T, str, v>() + rhs.template gradient<T, str, v>();
   }
 
-  template<typename T, const char *str>
-  auto gradient(const Variable<T, str>& v) const
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const
       -> typename std::enable_if<
-      !(std::is_same<T, decltype(lhs.gradient(v))>::value
-      && std::is_same<T, decltype(rhs.gradient(v))>::value),
-      typename Add<decltype(lhs.gradient(v)), decltype(rhs.gradient(v))>::type> {
-    return {lhs.gradient(v), rhs.gradient(v)};
+      !(std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value
+      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value),
+      typename Add<decltype(lhs.template gradient<T, str, v>()),
+      decltype(rhs.template gradient<T, str, v>())>::type> {
+    return {lhs.template gradient<T, str, v>(v), rhs.template gradient<T, str, v>()};
   }
 };
 
@@ -45,11 +46,11 @@ class Add<Lhs, real> : public Expression<Add<Lhs, real>> {
  public:
   Add(const Lhs& lhs, const real& rhs) : lhs(lhs), rhs(rhs) {}
 
-  auto operator()() const -> decltype(lhs() + rhs) { return lhs() + rhs; }
+  //auto operator()() const -> decltype(lhs() + rhs) { return lhs() + rhs; }
 
-  template<typename T, const char *str>
-  auto gradient(const Variable<T, str>& v) const -> decltype(lhs.gradient(v)) {
-    return lhs.gradient(v);
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const -> decltype(lhs.template gradient<T, str, v>()) {
+    return lhs.template gradient<T, str, v>();
   }
 };
 
@@ -60,11 +61,11 @@ class Add<real, Rhs> : public Expression<Add<real, Rhs>> {
 
  public:
   Add(const real& lhs, const Rhs& rhs) : lhs(lhs), rhs(rhs) {}
-  auto operator()() const -> decltype(lhs + rhs()) { return lhs + rhs(); }
+  //auto operator()() const -> decltype(lhs + rhs()) { return lhs + rhs(); }
 
-  template<typename T, const char *str>
-  auto gradient(const Variable<T, str>& v) const -> decltype(rhs.gradient(v)) {
-    return rhs.gradient(v);
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const -> decltype(rhs.template gradient<T, str, v>()) {
+    return rhs.template gradient<T, str, v>();
   }
 };
 
