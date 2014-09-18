@@ -10,11 +10,11 @@ using real = double;
 
 template<typename Lhs, typename Rhs>
 class Add : public Expression<Add<Lhs, Rhs>> {
-  const Lhs& lhs;
-  const Rhs& rhs;
+  const Lhs lhs;
+  const Rhs rhs;
 
  public:
-  constexpr Add(const Lhs& lhs, const Rhs& rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Add(Lhs lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
 
   //constexpr auto operator()() const -> decltype(lhs() + rhs()) { return lhs() + rhs(); }
 
@@ -40,11 +40,11 @@ class Add : public Expression<Add<Lhs, Rhs>> {
 
 template<typename Lhs>
 class Add<Lhs, real> : public Expression<Add<Lhs, real>> {
-  const Lhs& lhs;
-  real rhs;
+  const Lhs lhs;
+  const real rhs;
 
  public:
-  Add(const Lhs& lhs, const real& rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Add(Lhs lhs, real rhs) : lhs(lhs), rhs(rhs) {}
 
   //auto operator()() const -> decltype(lhs() + rhs) { return lhs() + rhs; }
 
@@ -56,11 +56,11 @@ class Add<Lhs, real> : public Expression<Add<Lhs, real>> {
 
 template<typename Rhs>
 class Add<real, Rhs> : public Expression<Add<real, Rhs>> {
-  real lhs;
-  const Rhs& rhs;
+  const real lhs;
+  const Rhs rhs;
 
  public:
-  Add(const real& lhs, const Rhs& rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Add(real lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
   //auto operator()() const -> decltype(lhs + rhs()) { return lhs + rhs(); }
 
   template<typename T, const char *str, const Variable<T, str>& v>
@@ -70,18 +70,18 @@ class Add<real, Rhs> : public Expression<Add<real, Rhs>> {
 };
 
 template<typename Lhs, typename Rhs>
-inline Add<Lhs, Rhs> operator+(const Expression<Lhs>& lhs,
-                               const Expression<Rhs>& rhs) {
+constexpr Add<Lhs, Rhs> operator+(const Expression<Lhs>& lhs,
+                                  const Expression<Rhs>& rhs) {
   return {lhs.self(), rhs.self()};
 }
 
 template<typename Lhs>
-inline Add<Lhs, real> operator+(const Expression<Lhs>& lhs, real rhs) {
+constexpr Add<Lhs, real> operator+(const Expression<Lhs>& lhs, real rhs) {
   return {lhs.self(), rhs};
 }
 
 template<typename Rhs>
-inline Add<real, Rhs> operator+(real lhs, const Expression<Rhs>& rhs) {
+constexpr Add<real, Rhs> operator+(real lhs, const Expression<Rhs>& rhs) {
   return {lhs, rhs.self()};
 }
 

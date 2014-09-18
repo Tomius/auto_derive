@@ -11,6 +11,8 @@ class Variable : public Expression<Variable<T, name_>> {
  public:
   constexpr Variable() {}
 
+  using value_type = T;
+
   constexpr const char * name() const { return name_; }
 
   //constexpr Variable operator()() const { return 0; }
@@ -23,8 +25,10 @@ class Variable : public Expression<Variable<T, name_>> {
 };
 
 // Variables must be defined outside of functions!!
-#define VARIABLE(T, X) \
-  constexpr char _STRING_OF_##X[] = "#X"; \
-  constexpr Variable<T, _STRING_OF_##X> X;
+#define DECLARE_VARIABLE(T, X) \
+  constexpr char _STRING_OF_VARIABLE_##X[] = "#X"; \
+  constexpr Variable<T, _STRING_OF_VARIABLE_##X> X;
+
+#define VARIABLE(X) decltype(X)::value_type, _STRING_OF_VARIABLE_##X, X
 
 #endif
