@@ -6,6 +6,8 @@
 #include <type_traits>
 #include "./expression.hpp"
 
+using real = double;
+
 template<typename T, const char *name_>
 class Variable : public Expression<Variable<T, name_>> {
  public:
@@ -18,10 +20,10 @@ class Variable : public Expression<Variable<T, name_>> {
   //constexpr Variable operator()() const { return 0; }
 
   template<typename U, const char *str, const Variable<T, str>& v>
-  constexpr typename std::enable_if<str==name_, T>::type gradient() const { return T(1); }
+  constexpr typename std::enable_if<str==name_, U>::type gradient() const { return U(1); }
 
   template<typename U, const char *str, const Variable<T, str>& v>
-  constexpr typename std::enable_if<str!=name_, T>::type gradient() const { return T(0); }
+  constexpr typename std::enable_if<str!=name_, U>::type gradient() const { return U(0); }
 };
 
 // Variables must be defined outside of functions!!

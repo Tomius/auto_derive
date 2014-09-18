@@ -6,8 +6,6 @@
 #include <type_traits>
 #include "../variable.hpp"
 
-using real = double;
-
 template<typename Lhs, typename Rhs>
 class Add : public Expression<Add<Lhs, Rhs>> {
   const Lhs lhs;
@@ -18,20 +16,44 @@ class Add : public Expression<Add<Lhs, Rhs>> {
 
   //constexpr auto operator()() const -> decltype(lhs() + rhs()) { return lhs() + rhs(); }
 
-  // if both args have constant gradient, then the result is constant too
+  // if both args have constant gradient, then the result is the sum of the constants
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const
       -> typename std::enable_if<
       std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value
-      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value, T>::type {
+      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value,
+      decltype(lhs.template gradient<T, str, v>() + rhs.template gradient<T, str, v>())>::type {
     return lhs.template gradient<T, str, v>() + rhs.template gradient<T, str, v>();
   }
 
+  // if lhs's gradient is zero, and rhs's gradient is not a constant, then the
+  // total gradient is rhs's gradient
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const
+      -> typename std::enable_if<lhs.template gradient<T, str, v>() == 0
+      && !std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value,
+      decltype(rhs.template gradient<T, str, v>())>::type {
+    return rhs.template gradient<T, str, v>();
+  }
+
+  // same with rhs zero, lhs not constant
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const
+      -> typename std::enable_if<rhs.template gradient<T, str, v>() == 0
+      && !std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value,
+      decltype(lhs.template gradient<T, str, v>())>::type {
+    return lhs.template gradient<T, str, v>();
+  }
+
+  // if at least one gradient is an expression, and the other one is not zero,
+  // then the overall gradient is Add{lhs.gradient(), rhs.gradient()}
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const
       -> typename std::enable_if<
       !(std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value
-      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value),
+      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value) &&
+      lhs.template gradient<T, str, v>() == 0 &&
+      rhs.template gradient<T, str, v>() != 0,
       typename Add<decltype(lhs.template gradient<T, str, v>()),
       decltype(rhs.template gradient<T, str, v>())>::type> {
     return {lhs.template gradient<T, str, v>(v), rhs.template gradient<T, str, v>()};
