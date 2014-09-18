@@ -6,8 +6,14 @@
 #include <type_traits>
 #include "../variable.hpp"
 
+template<typename Lhs, typename Rhs, typename Enable = void>
+class Add;
+
 template<typename Lhs, typename Rhs>
-class Add : public Expression<Add<Lhs, Rhs>> {
+class Add<Lhs, Rhs,
+    typename std::enable_if<std::is_base_of<Expression<Lhs>, Lhs>::value &&
+                            std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
+    : public Expression<Add<Lhs, Rhs, void>> {
   const Lhs lhs;
   const Rhs rhs;
 
@@ -20,57 +26,26 @@ class Add : public Expression<Add<Lhs, Rhs>> {
     return lhs(context) + rhs(context);
   }
 
-  // if both args have constant gradient, then the result is the sum of the constants
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const
-      -> typename std::enable_if<
-      std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value
-      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value,
-      decltype(lhs.template gradient<T, str, v>() + rhs.template gradient<T, str, v>())>::type {
+      -> decltype(lhs.template gradient<T, str, v>() +
+        rhs.template gradient<T, str, v>()) {
     return lhs.template gradient<T, str, v>() + rhs.template gradient<T, str, v>();
-  }
-
-  // if lhs's gradient is zero, and rhs's gradient is not a constant, then the
-  // total gradient is rhs's gradient
-  template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const
-      -> typename std::enable_if<lhs.template gradient<T, str, v>() == 0
-      && !std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value,
-      decltype(rhs.template gradient<T, str, v>())>::type {
-    return rhs.template gradient<T, str, v>();
-  }
-
-  // same with rhs zero, lhs not constant
-  template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const
-      -> typename std::enable_if<rhs.template gradient<T, str, v>() == 0
-      && !std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value,
-      decltype(lhs.template gradient<T, str, v>())>::type {
-    return lhs.template gradient<T, str, v>();
-  }
-
-  // if at least one gradient is an expression, and the other one is not zero,
-  // then the overall gradient is Add{lhs.gradient(), rhs.gradient()}
-  template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const
-      -> typename std::enable_if<
-      !(std::is_same<T, decltype(lhs.template gradient<T, str, v>())>::value
-      && std::is_same<T, decltype(rhs.template gradient<T, str, v>())>::value) &&
-      lhs.template gradient<T, str, v>() == 0 &&
-      rhs.template gradient<T, str, v>() != 0,
-      typename Add<decltype(lhs.template gradient<T, str, v>()),
-      decltype(rhs.template gradient<T, str, v>())>::type> {
-    return {lhs.template gradient<T, str, v>(v), rhs.template gradient<T, str, v>()};
   }
 };
 
-template<typename Lhs>
-class Add<Lhs, real> : public Expression<Add<Lhs, real>> {
+template<typename Lhs, typename Constant>
+class Add<Lhs, Constant,
+    typename std::enable_if<
+  	  std::is_base_of<Expression<Lhs>, Lhs>::value &&
+      !std::is_base_of<Expression<Constant>, Constant>::value>::type>
+    : public Expression<Add<Lhs, Constant, void>> {
+
   const Lhs lhs;
-  const real rhs;
+  const Constant rhs;
 
  public:
-  constexpr Add(Lhs lhs, real rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Add(Lhs lhs, Constant rhs) : lhs(lhs), rhs(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
@@ -84,13 +59,18 @@ class Add<Lhs, real> : public Expression<Add<Lhs, real>> {
   }
 };
 
-template<typename Rhs>
-class Add<real, Rhs> : public Expression<Add<real, Rhs>> {
-  const real lhs;
+template<typename Constant, typename Rhs>
+class Add<Constant, Rhs,
+    typename std::enable_if<
+      !std::is_base_of<Expression<Constant>, Constant>::value &&
+      std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
+    : public Expression<Add<Constant, Rhs, void>> {
+
+  const Constant lhs;
   const Rhs rhs;
 
  public:
-  constexpr Add(real lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Add(Constant lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
@@ -105,19 +85,16 @@ class Add<real, Rhs> : public Expression<Add<real, Rhs>> {
 };
 
 template<typename Lhs, typename Rhs>
-constexpr Add<Lhs, Rhs> operator+(const Expression<Lhs>& lhs,
-                                  const Expression<Rhs>& rhs) {
-  return {lhs.self(), rhs.self()};
-}
-
-template<typename Lhs>
-constexpr Add<Lhs, real> operator+(const Expression<Lhs>& lhs, real rhs) {
-  return {lhs.self(), rhs};
-}
-
-template<typename Rhs>
-constexpr Add<real, Rhs> operator+(real lhs, const Expression<Rhs>& rhs) {
-  return {lhs, rhs.self()};
+constexpr auto operator+(Lhs lhs, Rhs rhs) ->
+    typename std::enable_if<
+        (std::is_base_of<Expression<Lhs>, Lhs>::value &&
+      std::is_base_of<Expression<Rhs>, Rhs>::value)
+        || (std::is_base_of<Expression<Lhs>, Lhs>::value &&
+      !std::is_base_of<Expression<Rhs>, Rhs>::value)
+        || (!std::is_base_of<Expression<Lhs>, Lhs>::value &&
+      std::is_base_of<Expression<Rhs>, Rhs>::value),
+    Add<Lhs, Rhs, void>>::type {
+  return {lhs, rhs};
 }
 
 #endif

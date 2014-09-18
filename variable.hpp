@@ -9,8 +9,6 @@
 #include <type_traits>
 #include "./expression.hpp"
 
-using real = double;
-
 template<typename T, const char *name_>
 class Variable : public Expression<Variable<T, name_>> {
  public:

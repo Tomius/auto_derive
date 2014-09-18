@@ -6,9 +6,8 @@
 template<typename T>
 struct Expression {
   constexpr Expression() {}
-  constexpr const T& self() const {
-    return static_cast<const T&>(*this);
-  }
+  constexpr bool operator==(int) const { return false; }
+  constexpr bool operator!=(int) const { return true; }
 };
 
 #endif

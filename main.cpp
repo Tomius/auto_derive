@@ -1,6 +1,10 @@
+// Copyright (c) 2014, Tamas Csala
+
 #include <iostream>
 #include <type_traits>
 #include "operators/add.hpp"
+
+using real = double;
 
 DECLARE_VARIABLE(real, x)
 DECLARE_VARIABLE(real, y)
