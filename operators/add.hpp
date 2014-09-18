@@ -14,7 +14,11 @@ class Add : public Expression<Add<Lhs, Rhs>> {
  public:
   constexpr Add(Lhs lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
 
-  //constexpr auto operator()() const -> decltype(lhs() + rhs()) { return lhs() + rhs(); }
+  template<typename T>
+  auto operator()(const std::map<std::string, T>& context) const
+      -> decltype(lhs(context) + rhs(context)) {
+    return lhs(context) + rhs(context);
+  }
 
   // if both args have constant gradient, then the result is the sum of the constants
   template<typename T, const char *str, const Variable<T, str>& v>
@@ -68,7 +72,11 @@ class Add<Lhs, real> : public Expression<Add<Lhs, real>> {
  public:
   constexpr Add(Lhs lhs, real rhs) : lhs(lhs), rhs(rhs) {}
 
-  //auto operator()() const -> decltype(lhs() + rhs) { return lhs() + rhs; }
+  template<typename T>
+  auto operator()(const std::map<std::string, T>& context) const
+      -> decltype(lhs(context) + rhs) {
+    return lhs(context) + rhs;
+  }
 
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const -> decltype(lhs.template gradient<T, str, v>()) {
@@ -83,7 +91,12 @@ class Add<real, Rhs> : public Expression<Add<real, Rhs>> {
 
  public:
   constexpr Add(real lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
-  //auto operator()() const -> decltype(lhs + rhs()) { return lhs + rhs(); }
+
+  template<typename T>
+  auto operator()(const std::map<std::string, T>& context) const
+      -> decltype(lhs + rhs(context)) {
+    return lhs + rhs(context);
+  }
 
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const -> decltype(rhs.template gradient<T, str, v>()) {

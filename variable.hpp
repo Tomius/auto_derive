@@ -3,6 +3,9 @@
 #ifndef VARIABLE_H_
 #define VARIABLE_H_
 
+#include <map>
+#include <string>
+#include <iostream>
 #include <type_traits>
 #include "./expression.hpp"
 
@@ -17,7 +20,9 @@ class Variable : public Expression<Variable<T, name_>> {
 
   constexpr const char * name() const { return name_; }
 
-  //constexpr Variable operator()() const { return 0; }
+  T operator()(const std::map<std::string, T>& context) const {
+    return context.at(name_);
+  }
 
   template<typename U, const char *str, const Variable<T, str>& v>
   constexpr typename std::enable_if<str==name_, U>::type gradient() const { return U(1); }
@@ -28,7 +33,7 @@ class Variable : public Expression<Variable<T, name_>> {
 
 // Variables must be defined outside of functions!!
 #define DECLARE_VARIABLE(T, X) \
-  constexpr char _STRING_OF_VARIABLE_##X[] = "#X"; \
+  constexpr char _STRING_OF_VARIABLE_##X[] = #X; \
   constexpr Variable<T, _STRING_OF_VARIABLE_##X> X;
 
 #define VARIABLE(X) decltype(X)::value_type, _STRING_OF_VARIABLE_##X, X
