@@ -5,6 +5,7 @@
 #include <string>
 #include <type_traits>
 #include "../expression.hpp"
+#include "./add.hpp"
 
 template<typename Lhs, typename Rhs, typename Enable = void>
 class Multiply;
@@ -93,21 +94,25 @@ constexpr auto operator*(Lhs lhs, Rhs rhs) ->
       std::is_base_of<Expression, Rhs>::value)
         || (std::is_base_of<Expression, Lhs>::value &&
       !std::is_base_of<Expression, Rhs>::value &&
-      !std::is_base_of<OneType, Rhs>::value)
+      !std::is_base_of<OneType, Rhs>::value &&
+      !std::is_base_of<ZeroType, Rhs>::value)
         || (!std::is_base_of<Expression, Lhs>::value &&
       !std::is_base_of<OneType, Lhs>::value &&
+      !std::is_base_of<ZeroType, Lhs>::value &&
       std::is_base_of<Expression, Rhs>::value),
     Multiply<Lhs, Rhs, void>>::type {
   return {lhs, rhs};
 }
 
 template<typename Lhs, typename T>
-constexpr Lhs operator*(Lhs lhs, PlusOne<T> rhs) {
+constexpr auto operator*(Lhs lhs, PlusOne<T> rhs) ->
+    typename std::enable_if<!std::is_base_of<ZeroType, Lhs>::value, Lhs>::type {
   return lhs;
 }
 
 template<typename T, typename Rhs>
-constexpr Rhs operator*(PlusOne<T> lhs, Rhs rhs) {
+constexpr auto operator*(PlusOne<T> lhs, Rhs rhs) ->
+    typename std::enable_if<!std::is_base_of<ZeroType, Rhs>::value, Rhs>::type {
   return rhs;
 }
 
@@ -117,12 +122,16 @@ constexpr PlusOne<decltype(T{1}*U{1})> operator*(PlusOne<T> lhs, PlusOne<U> rhs)
 }
 
 template<typename Lhs, typename T>
-constexpr Lhs operator*(Lhs lhs, MinusOne<T> rhs) {
+constexpr auto operator*(Lhs lhs, MinusOne<T> rhs) ->
+    typename std::enable_if<!std::is_base_of<ZeroType, Lhs>::value,
+    decltype(-lhs)>::type {
   return -lhs;
 }
 
 template<typename T, typename Rhs>
-constexpr Rhs operator*(MinusOne<T> lhs, Rhs rhs) {
+constexpr auto operator*(MinusOne<T> lhs, Rhs rhs) ->
+    typename std::enable_if<!std::is_base_of<ZeroType, Rhs>::value,
+    decltype(-rhs)>::type {
   return -rhs;
 }
 
@@ -139,6 +148,41 @@ constexpr MinusOne<decltype(T{1}*U{-1})> operator*(PlusOne<T> lhs, MinusOne<U> r
 template<typename T, typename U>
 constexpr MinusOne<decltype(T{-1}*U{1})> operator*(MinusOne<T> lhs, PlusOne<U> rhs) {
   return MinusOne<decltype(T{-1}*U{1})>{};
+}
+
+template<typename Lhs, typename T>
+constexpr Zero<T> operator*(Lhs lhs, Zero<T> rhs) {
+  return rhs;
+}
+
+template<typename T, typename U>
+constexpr Zero<U> operator*(PlusOne<T> lhs, Zero<U> rhs) {
+  return rhs;
+}
+
+template<typename T, typename U>
+constexpr Zero<U> operator*(MinusOne<T> lhs, Zero<U> rhs) {
+  return rhs;
+}
+
+template<typename T, typename Rhs>
+constexpr Zero<T> operator*(Zero<T> lhs, Rhs rhs) {
+  return lhs;
+}
+
+template<typename T, typename U>
+constexpr Zero<T> operator*(Zero<T> lhs, PlusOne<U> rhs) {
+  return lhs;
+}
+
+template<typename T, typename U>
+constexpr Zero<T> operator*(Zero<T> lhs, MinusOne<U> rhs) {
+  return lhs;
+}
+
+template<typename T, typename U>
+constexpr Zero<decltype(T{0}*U{0})> operator*(Zero<T> lhs, Zero<U> rhs) {
+  return Zero<decltype(T{0}*U{0})>{};
 }
 
 #endif

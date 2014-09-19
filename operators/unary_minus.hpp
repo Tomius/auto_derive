@@ -21,7 +21,7 @@ class UnaryMinus : public Expression {
 
   template<typename T, const char *str>
   constexpr auto gradient() const
-      ->  decltype(-expr_.template gradient<T, str>()) {
+      -> decltype(-expr_.template gradient<T, str>()) {
     return -expr_.template gradient<T, str>();
   }
 };

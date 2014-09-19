@@ -115,5 +115,14 @@ constexpr Zero<decltype(T{0}-U{0})> operator-(Zero<T> lhs, Zero<U> rhs) {
   return Zero<decltype(T{0}-U{0})>{};
 }
 
+template<typename T, typename U>
+constexpr Zero<decltype(T{1}-U{1})> operator-(PlusOne<T> lhs, PlusOne<U> rhs) {
+  return Zero<decltype(T{1}-U{1})>{};
+}
+
+template<typename T, typename U>
+constexpr Zero<decltype(T{-1}-U{-1})> operator-(MinusOne<T> lhs, MinusOne<U> rhs) {
+  return Zero<decltype(T{-1}-U{-1})>{};
+}
 
 #endif
