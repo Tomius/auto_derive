@@ -14,23 +14,23 @@ class Sub<Lhs, Rhs,
     typename std::enable_if<std::is_base_of<Expression<Lhs>, Lhs>::value &&
                             std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
     : public Expression<Sub<Lhs, Rhs, void>> {
-  const Lhs lhs;
-  const Rhs rhs;
+  const Lhs lhs_;
+  const Rhs rhs_;
 
  public:
-  constexpr Sub(Lhs lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Sub(Lhs lhs_, Rhs rhs_) : lhs_(lhs_), rhs_(rhs_) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs(context) - rhs(context)) {
-    return lhs(context) - rhs(context);
+      -> decltype(lhs_(context) - rhs_(context)) {
+    return lhs_(context) - rhs_(context);
   }
 
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const
-      -> decltype(lhs.template gradient<T, str, v>() -
-        rhs.template gradient<T, str, v>()) {
-    return lhs.template gradient<T, str, v>() - rhs.template gradient<T, str, v>();
+      -> decltype(lhs_.template gradient<T, str, v>() -
+        rhs_.template gradient<T, str, v>()) {
+    return lhs_.template gradient<T, str, v>() - rhs_.template gradient<T, str, v>();
   }
 };
 
@@ -41,21 +41,21 @@ class Sub<Lhs, Constant,
       !std::is_base_of<Expression<Constant>, Constant>::value>::type>
     : public Expression<Sub<Lhs, Constant, void>> {
 
-  const Lhs lhs;
-  const Constant rhs;
+  const Lhs lhs_;
+  const Constant rhs_;
 
  public:
-  constexpr Sub(Lhs lhs, Constant rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Sub(Lhs lhs_, Constant rhs_) : lhs_(lhs_), rhs_(rhs_) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs(context) - rhs) {
-    return lhs(context) - rhs;
+      -> decltype(lhs_(context) - rhs_) {
+    return lhs_(context) - rhs_;
   }
 
   template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const -> decltype(lhs.template gradient<T, str, v>()) {
-    return lhs.template gradient<T, str, v>();
+  constexpr auto gradient() const -> decltype(lhs_.template gradient<T, str, v>()) {
+    return lhs_.template gradient<T, str, v>();
   }
 };
 
@@ -66,21 +66,21 @@ class Sub<Constant, Rhs,
       std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
     : public Expression<Sub<Constant, Rhs, void>> {
 
-  const Constant lhs;
-  const Rhs rhs;
+  const Constant lhs_;
+  const Rhs rhs_;
 
  public:
-  constexpr Sub(Constant lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Sub(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs - rhs(context)) {
-    return lhs - rhs(context);
+      -> decltype(lhs_ - rhs_(context)) {
+    return lhs_ - rhs_(context);
   }
 
   template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const -> decltype(0 - rhs.template gradient<T, str, v>()) {
-    return 0 - rhs.template gradient<T, str, v>();
+  constexpr auto gradient() const -> decltype(0 - rhs_.template gradient<T, str, v>()) {
+    return 0 - rhs_.template gradient<T, str, v>();
   }
 };
 

@@ -23,13 +23,17 @@ class Variable : public Expression<Variable<T, name_>> {
   }
 
   template<typename U, const char *str, const Variable<T, str>& v>
-  constexpr typename std::enable_if<str==name_, U>::type gradient() const { return U(1); }
+  constexpr typename std::enable_if<str==name_, U>::type gradient() const {
+    return U(1);
+  }
 
   template<typename U, const char *str, const Variable<T, str>& v>
-  constexpr typename std::enable_if<str!=name_, U>::type gradient() const { return U(0); }
+  constexpr typename std::enable_if<str!=name_, U>::type gradient() const {
+    return U(0);
+  }
 };
 
-// Variables must be defined outside of functions!!
+// Variables must be defined in global namespace...
 #define DECLARE_VARIABLE(T, X) \
   constexpr char _STRING_OF_VARIABLE_##X[] = #X; \
   constexpr Variable<T, _STRING_OF_VARIABLE_##X> X;

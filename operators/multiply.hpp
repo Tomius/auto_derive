@@ -14,24 +14,24 @@ class Multiply<Lhs, Rhs,
     typename std::enable_if<std::is_base_of<Expression<Lhs>, Lhs>::value &&
                             std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
     : public Expression<Multiply<Lhs, Rhs, void>> {
-  const Lhs lhs;
-  const Rhs rhs;
+  const Lhs lhs_;
+  const Rhs rhs_;
 
  public:
-  constexpr Multiply(Lhs lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Multiply(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs(context) * rhs(context)) {
-    return lhs(context) * rhs(context);
+      -> decltype(lhs_(context) * rhs_(context)) {
+    return lhs_(context) * rhs_(context);
   }
 
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const
-      -> decltype(lhs * rhs.template gradient<T, str, v>() +
-                 rhs * lhs.template gradient<T, str, v>()) {
-    return lhs * rhs.template gradient<T, str, v>() +
-    	     rhs * lhs.template gradient<T, str, v>();
+      -> decltype(lhs_ * rhs_.template gradient<T, str, v>() +
+                 rhs_ * lhs_.template gradient<T, str, v>()) {
+    return lhs_ * rhs_.template gradient<T, str, v>() +
+    	     rhs_ * lhs_.template gradient<T, str, v>();
   }
 };
 
@@ -42,22 +42,22 @@ class Multiply<Lhs, Constant,
       !std::is_base_of<Expression<Constant>, Constant>::value>::type>
     : public Expression<Multiply<Lhs, Constant, void>> {
 
-  const Lhs lhs;
-  const Constant rhs;
+  const Lhs lhs_;
+  const Constant rhs_;
 
  public:
-  constexpr Multiply(Lhs lhs, Constant rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Multiply(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs(context) * rhs) {
-    return lhs(context) * rhs;
+      -> decltype(lhs_(context) * rhs_) {
+    return lhs_(context) * rhs_;
   }
 
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const
-      -> decltype(lhs.template gradient<T, str, v>() * rhs) {
-    return lhs.template gradient<T, str, v>() * rhs;
+      -> decltype(lhs_.template gradient<T, str, v>() * rhs_) {
+    return lhs_.template gradient<T, str, v>() * rhs_;
   }
 };
 
@@ -68,26 +68,26 @@ class Multiply<Constant, Rhs,
       std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
     : public Expression<Multiply<Constant, Rhs, void>> {
 
-  const Constant lhs;
-  const Rhs rhs;
+  const Constant lhs_;
+  const Rhs rhs_;
 
  public:
-  constexpr Multiply(Constant lhs, Rhs rhs) : lhs(lhs), rhs(rhs) {}
+  constexpr Multiply(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs * rhs(context)) {
-    return lhs * rhs(context);
+      -> decltype(lhs_ * rhs_(context)) {
+    return lhs_ * rhs_(context);
   }
 
   template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const -> decltype(lhs * rhs.template gradient<T, str, v>()) {
-    return lhs * rhs.template gradient<T, str, v>();
+  constexpr auto gradient() const -> decltype(lhs_ * rhs_.template gradient<T, str, v>()) {
+    return lhs_ * rhs_.template gradient<T, str, v>();
   }
 };
 
 template<typename Lhs, typename Rhs>
-constexpr auto operator*(Lhs lhs, Rhs rhs) ->
+constexpr auto operator*(Lhs lhs, Rhs rhs_) ->
     typename std::enable_if<
         (std::is_base_of<Expression<Lhs>, Lhs>::value &&
       std::is_base_of<Expression<Rhs>, Rhs>::value)
@@ -96,7 +96,7 @@ constexpr auto operator*(Lhs lhs, Rhs rhs) ->
         || (!std::is_base_of<Expression<Lhs>, Lhs>::value &&
       std::is_base_of<Expression<Rhs>, Rhs>::value),
     Multiply<Lhs, Rhs, void>>::type {
-  return {lhs, rhs};
+  return {lhs, rhs_};
 }
 
 #endif

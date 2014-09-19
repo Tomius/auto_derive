@@ -40,11 +40,16 @@ void test1() {
 
 void test2() {
   constexpr auto func = x*x*x;
+  constexpr auto dx = func.gradient<VARIABLE(x)>();
+  constexpr auto d2x = dx.gradient<VARIABLE(x)>();
+  constexpr auto d3x = d2x.gradient<VARIABLE(x)>();
 
   std::map<std::string, real> context;
   context["x"] = 2;
-  assert(8 == func(context));
-  assert((12 == func.gradient<VARIABLE(x)>()(context)));
+  assert(1*8 == func(context));
+  assert(3*4 == dx(context));
+  assert(6*2 == d2x(context));
+  static_assert(d3x==6, "error");
 }
 
 int main() {
