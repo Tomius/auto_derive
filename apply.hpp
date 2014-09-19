@@ -5,7 +5,7 @@
 
 // needed to differentiate f(g(x))
 template<typename Expr, const char * variable, typename Value>
-class Substitute : public Expression<Substitute<Expr, variable, Value>> {
+class Substitute : public Expression{
   const Expr expr_;
   const Value value_;
 

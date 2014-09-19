@@ -11,9 +11,9 @@ class Multiply;
 
 template<typename Lhs, typename Rhs>
 class Multiply<Lhs, Rhs,
-    typename std::enable_if<std::is_base_of<Expression<Lhs>, Lhs>::value &&
-                            std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
-    : public Expression<Multiply<Lhs, Rhs, void>> {
+    typename std::enable_if<std::is_base_of<Expression, Lhs>::value &&
+                            std::is_base_of<Expression, Rhs>::value>::type>
+    : public Expression {
   const Lhs lhs_;
   const Rhs rhs_;
 
@@ -38,9 +38,9 @@ class Multiply<Lhs, Rhs,
 template<typename Lhs, typename Constant>
 class Multiply<Lhs, Constant,
     typename std::enable_if<
-      std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      !std::is_base_of<Expression<Constant>, Constant>::value>::type>
-    : public Expression<Multiply<Lhs, Constant, void>> {
+      std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<Expression, Constant>::value>::type>
+    : public Expression {
 
   const Lhs lhs_;
   const Constant rhs_;
@@ -64,9 +64,9 @@ class Multiply<Lhs, Constant,
 template<typename Constant, typename Rhs>
 class Multiply<Constant, Rhs,
     typename std::enable_if<
-      !std::is_base_of<Expression<Constant>, Constant>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
-    : public Expression<Multiply<Constant, Rhs, void>> {
+      !std::is_base_of<Expression, Constant>::value &&
+      std::is_base_of<Expression, Rhs>::value>::type>
+    : public Expression {
 
   const Constant lhs_;
   const Rhs rhs_;
@@ -89,12 +89,12 @@ class Multiply<Constant, Rhs,
 template<typename Lhs, typename Rhs>
 constexpr auto operator*(Lhs lhs, Rhs rhs_) ->
     typename std::enable_if<
-        (std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value)
-        || (std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      !std::is_base_of<Expression<Rhs>, Rhs>::value)
-        || (!std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value),
+        (std::is_base_of<Expression, Lhs>::value &&
+      std::is_base_of<Expression, Rhs>::value)
+        || (std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<Expression, Rhs>::value)
+        || (!std::is_base_of<Expression, Lhs>::value &&
+      std::is_base_of<Expression, Rhs>::value),
     Multiply<Lhs, Rhs, void>>::type {
   return {lhs, rhs_};
 }

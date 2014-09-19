@@ -11,9 +11,9 @@ class Sub;
 
 template<typename Lhs, typename Rhs>
 class Sub<Lhs, Rhs,
-    typename std::enable_if<std::is_base_of<Expression<Lhs>, Lhs>::value &&
-                            std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
-    : public Expression<Sub<Lhs, Rhs, void>> {
+    typename std::enable_if<std::is_base_of<Expression, Lhs>::value &&
+                            std::is_base_of<Expression, Rhs>::value>::type>
+    : public Expression {
   const Lhs lhs_;
   const Rhs rhs_;
 
@@ -37,9 +37,9 @@ class Sub<Lhs, Rhs,
 template<typename Lhs, typename Constant>
 class Sub<Lhs, Constant,
     typename std::enable_if<
-      std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      !std::is_base_of<Expression<Constant>, Constant>::value>::type>
-    : public Expression<Sub<Lhs, Constant, void>> {
+      std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<Expression, Constant>::value>::type>
+    : public Expression {
 
   const Lhs lhs_;
   const Constant rhs_;
@@ -62,9 +62,9 @@ class Sub<Lhs, Constant,
 template<typename Constant, typename Rhs>
 class Sub<Constant, Rhs,
     typename std::enable_if<
-      !std::is_base_of<Expression<Constant>, Constant>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
-    : public Expression<Sub<Constant, Rhs, void>> {
+      !std::is_base_of<Expression, Constant>::value &&
+      std::is_base_of<Expression, Rhs>::value>::type>
+    : public Expression {
 
   const Constant lhs_;
   const Rhs rhs_;
@@ -87,12 +87,12 @@ class Sub<Constant, Rhs,
 template<typename Lhs, typename Rhs>
 constexpr auto operator-(Lhs lhs, Rhs rhs) ->
     typename std::enable_if<
-        (std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value)
-        || (std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      !std::is_base_of<Expression<Rhs>, Rhs>::value)
-        || (!std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value),
+        (std::is_base_of<Expression, Lhs>::value &&
+      std::is_base_of<Expression, Rhs>::value)
+        || (std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<Expression, Rhs>::value)
+        || (!std::is_base_of<Expression, Lhs>::value &&
+      std::is_base_of<Expression, Rhs>::value),
     Sub<Lhs, Rhs, void>>::type {
   return {lhs, rhs};
 }

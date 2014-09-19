@@ -10,7 +10,7 @@
 #include "./expression.hpp"
 
 template<typename T, const char *name_>
-class Variable : public Expression<Variable<T, name_>> {
+class Variable : public Expression {
  public:
   constexpr Variable() {}
 

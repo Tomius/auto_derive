@@ -11,9 +11,9 @@ class Add;
 
 template<typename Lhs, typename Rhs>
 class Add<Lhs, Rhs,
-    typename std::enable_if<std::is_base_of<Expression<Lhs>, Lhs>::value &&
-                            std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
-    : public Expression<Add<Lhs, Rhs, void>> {
+    typename std::enable_if<std::is_base_of<Expression, Lhs>::value &&
+                            std::is_base_of<Expression, Rhs>::value>::type>
+    : public Expression {
   const Lhs lhs_;
   const Rhs rhs_;
 
@@ -37,9 +37,9 @@ class Add<Lhs, Rhs,
 template<typename Lhs, typename Constant>
 class Add<Lhs, Constant,
     typename std::enable_if<
-  	  std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      !std::is_base_of<Expression<Constant>, Constant>::value>::type>
-    : public Expression<Add<Lhs, Constant, void>> {
+  	  std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<Expression, Constant>::value>::type>
+    : public Expression {
 
   const Lhs lhs_;
   const Constant rhs_;
@@ -62,9 +62,9 @@ class Add<Lhs, Constant,
 template<typename Constant, typename Rhs>
 class Add<Constant, Rhs,
     typename std::enable_if<
-      !std::is_base_of<Expression<Constant>, Constant>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value>::type>
-    : public Expression<Add<Constant, Rhs, void>> {
+      !std::is_base_of<Expression, Constant>::value &&
+      std::is_base_of<Expression, Rhs>::value>::type>
+    : public Expression {
 
   const Constant lhs_;
   const Rhs rhs_;
@@ -87,12 +87,12 @@ class Add<Constant, Rhs,
 template<typename Lhs, typename Rhs>
 constexpr auto operator+(Lhs lhs, Rhs rhs) ->
     typename std::enable_if<
-        (std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value)
-        || (std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      !std::is_base_of<Expression<Rhs>, Rhs>::value)
-        || (!std::is_base_of<Expression<Lhs>, Lhs>::value &&
-      std::is_base_of<Expression<Rhs>, Rhs>::value),
+        (std::is_base_of<Expression, Lhs>::value &&
+      std::is_base_of<Expression, Rhs>::value)
+        || (std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<Expression, Rhs>::value)
+        || (!std::is_base_of<Expression, Lhs>::value &&
+      std::is_base_of<Expression, Rhs>::value),
     Add<Lhs, Rhs, void>>::type {
   return {lhs, rhs};
 }
