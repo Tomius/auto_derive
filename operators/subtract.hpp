@@ -100,24 +100,20 @@ constexpr auto operator-(Lhs lhs, Rhs rhs) ->
   return {lhs, rhs};
 }
 
-template<typename Lhs, typename Rhs>
-constexpr auto operator-(Lhs lhs, Rhs rhs) ->
-    typename std::enable_if<
-      std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<Expression, Rhs>::value &&
-      std::is_base_of<ZeroType, Rhs>::value,
-    Lhs>::type {
+template<typename Lhs, typename T>
+constexpr Lhs operator-(Lhs lhs, Zero<T> rhs) {
   return lhs;
 }
 
-template<typename Lhs, typename Rhs>
-constexpr auto operator-(Lhs lhs, Rhs rhs) ->
-    typename std::enable_if<
-      !std::is_base_of<Expression, Lhs>::value &&
-      std::is_base_of<ZeroType, Lhs>::value &&
-      std::is_base_of<Expression, Rhs>::value,
-    decltype(-rhs)>::type {
+template<typename T, typename Rhs>
+constexpr auto operator-(Zero<T> lhs, Rhs rhs) -> decltype(-rhs) {
   return -rhs;
 }
+
+template<typename T, typename U>
+constexpr Zero<decltype(T{0}-U{0})> operator-(Zero<T> lhs, Zero<U> rhs) {
+  return Zero<decltype(T{0}-U{0})>{};
+}
+
 
 #endif
