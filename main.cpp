@@ -47,15 +47,15 @@ void test1() {
 void test2() {
   constexpr auto func = x*x*x;
   constexpr auto dx = func.gradient<VARIABLE(x)>();
-  constexpr auto d2x = dx.gradient<VARIABLE(x)>();
-  constexpr auto d3x = d2x.gradient<VARIABLE(x)>();
+  constexpr auto dx2 = dx.gradient<VARIABLE(x)>();
+  constexpr auto dx3 = dx2.gradient<VARIABLE(x)>();
 
   std::map<std::string, real> context;
   context["x"] = 2;
   assertEquals(1*8, func(context));
   assertEquals(3*4, dx(context));
-  assertEquals(6*2, d2x(context));
-  static_assert(d3x==6, "error");
+  assertEquals(6*2, dx2(context));
+  static_assert(dx3==6, "error");
 }
 
 void test3() {
@@ -91,6 +91,21 @@ void test5() {
   assertEquals(-1683.0/14.0, func(context));
   assertEquals(-50.5, dx(context));
   assertEquals(5686.0/175.0, dy(context));
+}
+
+void test6() {
+  constexpr auto dx5 = (13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x)
+                        .gradient<VARIABLE(x)>()
+                        .gradient<VARIABLE(x)>()
+                        .gradient<VARIABLE(x)>()
+                        .gradient<VARIABLE(x)>()
+                        .gradient<VARIABLE(x)>();
+
+  std::map<std::string, real> context;
+  context["x"] = 5;
+  context["y"] = 2;
+
+  assertEquals(2364./875., dx5(context));
 }
 
 int main() {
