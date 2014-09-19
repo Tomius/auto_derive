@@ -1,5 +1,3 @@
-// Copyright (c) 2014, Tamas Csala
-
 #include <cassert>
 #include <iostream>
 #include <type_traits>

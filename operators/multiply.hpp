@@ -1,5 +1,3 @@
-// Copyright (c) 2014, Tamas Csala
-
 #ifndef OPERATORS_MULTIPLY_HPP_
 #define OPERATORS_MULTIPLY_HPP_
 

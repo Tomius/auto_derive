@@ -1,5 +1,3 @@
-// Copyright (c) 2014, Tamas Csala
-
 #ifndef VARIABLE_HPP_
 #define VARIABLE_HPP_
 

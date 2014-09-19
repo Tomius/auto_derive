@@ -1,5 +1,3 @@
-// Copyright (c) 2014, Tamas Csala
-
 #ifndef OPERATORS_SUB_HPP_
 #define OPERATORS_SUB_HPP_
 
