@@ -20,13 +20,13 @@ class Variable : public Expression {
     return context.at(name_);
   }
 
-  template<typename U, const char *str, const Variable<T, str>& v>
+  template<typename U, const char *str>
   constexpr typename std::enable_if<str==name_, One<U>>::type gradient() const {
     return One<U>{};
   }
 
-  template<typename U, const char *str, const Variable<T, str>& v>
-  constexpr typename std::enable_if<str!=name_, U>::type gradient() const {
+  template<typename U, const char *str>
+  constexpr typename std::enable_if<str!=name_, Zero<U>>::type gradient() const {
     return Zero<U>{};
   }
 };
@@ -36,6 +36,6 @@ class Variable : public Expression {
   constexpr char _STRING_OF_VARIABLE_##X[] = #X; \
   constexpr Variable<T, _STRING_OF_VARIABLE_##X> X;
 
-#define VARIABLE(X) decltype(X)::value_type, _STRING_OF_VARIABLE_##X, X
+#define VARIABLE(X) decltype(X)::value_type, _STRING_OF_VARIABLE_##X
 
 #endif

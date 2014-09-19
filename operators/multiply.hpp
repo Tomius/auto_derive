@@ -1,8 +1,10 @@
 #ifndef OPERATORS_MULTIPLY_HPP_
 #define OPERATORS_MULTIPLY_HPP_
 
+#include <map>
+#include <string>
 #include <type_traits>
-#include "../variable.hpp"
+#include "../expression.hpp"
 
 template<typename Lhs, typename Rhs, typename Enable = void>
 class Multiply;
@@ -24,12 +26,12 @@ class Multiply<Lhs, Rhs,
     return lhs_(context) * rhs_(context);
   }
 
-  template<typename T, const char *str, const Variable<T, str>& v>
+  template<typename T, const char *str>
   constexpr auto gradient() const
-      -> decltype(lhs_ * rhs_.template gradient<T, str, v>() +
-                 rhs_ * lhs_.template gradient<T, str, v>()) {
-    return lhs_ * rhs_.template gradient<T, str, v>() +
-    	     rhs_ * lhs_.template gradient<T, str, v>();
+      -> decltype(lhs_ * rhs_.template gradient<T, str>() +
+                 rhs_ * lhs_.template gradient<T, str>()) {
+    return lhs_ * rhs_.template gradient<T, str>() +
+    	     rhs_ * lhs_.template gradient<T, str>();
   }
 };
 
@@ -52,10 +54,10 @@ class Multiply<Lhs, Constant,
     return lhs_(context) * rhs_;
   }
 
-  template<typename T, const char *str, const Variable<T, str>& v>
+  template<typename T, const char *str>
   constexpr auto gradient() const
-      -> decltype(lhs_.template gradient<T, str, v>() * rhs_) {
-    return lhs_.template gradient<T, str, v>() * rhs_;
+      -> decltype(lhs_.template gradient<T, str>() * rhs_) {
+    return lhs_.template gradient<T, str>() * rhs_;
   }
 };
 
@@ -78,14 +80,14 @@ class Multiply<Constant, Rhs,
     return lhs_ * rhs_(context);
   }
 
-  template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const -> decltype(lhs_ * rhs_.template gradient<T, str, v>()) {
-    return lhs_ * rhs_.template gradient<T, str, v>();
+  template<typename T, const char *str>
+  constexpr auto gradient() const -> decltype(lhs_ * rhs_.template gradient<T, str>()) {
+    return lhs_ * rhs_.template gradient<T, str>();
   }
 };
 
 template<typename Lhs, typename Rhs>
-constexpr auto operator*(Lhs lhs, Rhs rhs_) ->
+constexpr auto operator*(Lhs lhs, Rhs rhs) ->
     typename std::enable_if<
         (std::is_base_of<Expression, Lhs>::value &&
       std::is_base_of<Expression, Rhs>::value)
@@ -94,7 +96,7 @@ constexpr auto operator*(Lhs lhs, Rhs rhs_) ->
         || (!std::is_base_of<Expression, Lhs>::value &&
       std::is_base_of<Expression, Rhs>::value),
     Multiply<Lhs, Rhs, void>>::type {
-  return {lhs, rhs_};
+  return {lhs, rhs};
 }
 
 #endif

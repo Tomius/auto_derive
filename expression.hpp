@@ -7,18 +7,22 @@ struct Expression {
 
 template<typename T>
 struct Constant {
-  const T t;
-  constexpr Constant(T t) : t(t) {}
-  constexpr operator T() const { return t; }
+  const T value;
+  constexpr Constant(T value) : value(value) {}
+  constexpr operator T() const { return value; }
 };
 
+struct OneType { constexpr OneType() {} };
+
 template<typename T>
-struct One : Constant<T> {
+struct One : Constant<T>, OneType {
   constexpr One() : Constant<T>{1} {}
 };
 
+struct ZeroType { constexpr ZeroType() {} };
+
 template<typename T>
-struct Zero : Constant<T> {
+struct Zero : Constant<T>, ZeroType {
   constexpr Zero() : Constant<T>{0} {}
 };
 

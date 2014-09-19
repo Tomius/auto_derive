@@ -1,8 +1,10 @@
 #include <cassert>
 #include <iostream>
+#include <typeinfo>
 #include <type_traits>
+#include "./variable.hpp"
 #include "operators/add.hpp"
-#include "operators/sub.hpp"
+#include "operators/subtract.hpp"
 #include "operators/multiply.hpp"
 
 using real = double;
@@ -50,9 +52,17 @@ void test2() {
   static_assert(d3x==6, "error");
 }
 
+void test3() {
+  constexpr auto func = x + y.gradient<VARIABLE(x)>();
+  constexpr auto func2 = y.gradient<VARIABLE(x)>() + x;
+  static_assert(std::is_same<decltype(x), decltype(func)>::value, "");
+  static_assert(std::is_same<decltype(x), decltype(func2)>::value, "");
+}
+
 int main() {
   test0();
   test1();
   test2();
+  test3();
   std::cout << "Test passed without any errors!" << std::endl;
 }

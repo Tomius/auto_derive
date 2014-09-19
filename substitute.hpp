@@ -1,5 +1,5 @@
-#ifndef APPLY_H_
-#define APPLY_H_
+#ifndef SUBSTITUTE_H_
+#define SUBSTITUTE_H_
 
 #include "./variable.hpp"
 

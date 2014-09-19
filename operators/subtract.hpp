@@ -1,14 +1,17 @@
-#ifndef OPERATORS_SUB_HPP_
-#define OPERATORS_SUB_HPP_
+#ifndef OPERATORS_SUBTRACT_HPP_
+#define OPERATORS_SUBTRACT_HPP_
 
+#include <map>
+#include <string>
 #include <type_traits>
-#include "../variable.hpp"
+#include "../expression.hpp"
+#include "./unary_minus.hpp"
 
 template<typename Lhs, typename Rhs, typename Enable = void>
-class Sub;
+class Subtract;
 
 template<typename Lhs, typename Rhs>
-class Sub<Lhs, Rhs,
+class Subtract<Lhs, Rhs,
     typename std::enable_if<std::is_base_of<Expression, Lhs>::value &&
                             std::is_base_of<Expression, Rhs>::value>::type>
     : public Expression {
@@ -16,7 +19,7 @@ class Sub<Lhs, Rhs,
   const Rhs rhs_;
 
  public:
-  constexpr Sub(Lhs lhs_, Rhs rhs_) : lhs_(lhs_), rhs_(rhs_) {}
+  constexpr Subtract(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
@@ -24,16 +27,16 @@ class Sub<Lhs, Rhs,
     return lhs_(context) - rhs_(context);
   }
 
-  template<typename T, const char *str, const Variable<T, str>& v>
+  template<typename T, const char *str>
   constexpr auto gradient() const
-      -> decltype(lhs_.template gradient<T, str, v>() -
-        rhs_.template gradient<T, str, v>()) {
-    return lhs_.template gradient<T, str, v>() - rhs_.template gradient<T, str, v>();
+      -> decltype(lhs_.template gradient<T, str>() -
+                  rhs_.template gradient<T, str>()) {
+    return lhs_.template gradient<T, str>() - rhs_.template gradient<T, str>();
   }
 };
 
 template<typename Lhs, typename Constant>
-class Sub<Lhs, Constant,
+class Subtract<Lhs, Constant,
     typename std::enable_if<
       std::is_base_of<Expression, Lhs>::value &&
       !std::is_base_of<Expression, Constant>::value>::type>
@@ -43,7 +46,7 @@ class Sub<Lhs, Constant,
   const Constant rhs_;
 
  public:
-  constexpr Sub(Lhs lhs_, Constant rhs_) : lhs_(lhs_), rhs_(rhs_) {}
+  constexpr Subtract(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
@@ -51,14 +54,14 @@ class Sub<Lhs, Constant,
     return lhs_(context) - rhs_;
   }
 
-  template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const -> decltype(lhs_.template gradient<T, str, v>()) {
-    return lhs_.template gradient<T, str, v>();
+  template<typename T, const char *str>
+  constexpr auto gradient() const -> decltype(lhs_.template gradient<T, str>()) {
+    return lhs_.template gradient<T, str>();
   }
 };
 
 template<typename Constant, typename Rhs>
-class Sub<Constant, Rhs,
+class Subtract<Constant, Rhs,
     typename std::enable_if<
       !std::is_base_of<Expression, Constant>::value &&
       std::is_base_of<Expression, Rhs>::value>::type>
@@ -68,7 +71,7 @@ class Sub<Constant, Rhs,
   const Rhs rhs_;
 
  public:
-  constexpr Sub(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
+  constexpr Subtract(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
   auto operator()(const std::map<std::string, T>& context) const
@@ -76,9 +79,9 @@ class Sub<Constant, Rhs,
     return lhs_ - rhs_(context);
   }
 
-  template<typename T, const char *str, const Variable<T, str>& v>
-  constexpr auto gradient() const -> decltype(0 - rhs_.template gradient<T, str, v>()) {
-    return 0 - rhs_.template gradient<T, str, v>();
+  template<typename T, const char *str>
+  constexpr auto gradient() const -> decltype(-rhs_.template gradient<T, str>()) {
+    return -rhs_.template gradient<T, str>();
   }
 };
 
@@ -88,11 +91,33 @@ constexpr auto operator-(Lhs lhs, Rhs rhs) ->
         (std::is_base_of<Expression, Lhs>::value &&
       std::is_base_of<Expression, Rhs>::value)
         || (std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<Expression, Rhs>::value)
+      !std::is_base_of<Expression, Rhs>::value &&
+      !std::is_base_of<ZeroType, Rhs>::value)
         || (!std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<ZeroType, Lhs>::value &&
       std::is_base_of<Expression, Rhs>::value),
-    Sub<Lhs, Rhs, void>>::type {
+    Subtract<Lhs, Rhs, void>>::type {
   return {lhs, rhs};
+}
+
+template<typename Lhs, typename Rhs>
+constexpr auto operator-(Lhs lhs, Rhs rhs) ->
+    typename std::enable_if<
+      std::is_base_of<Expression, Lhs>::value &&
+      !std::is_base_of<Expression, Rhs>::value &&
+      std::is_base_of<ZeroType, Rhs>::value,
+    Lhs>::type {
+  return lhs;
+}
+
+template<typename Lhs, typename Rhs>
+constexpr auto operator-(Lhs lhs, Rhs rhs) ->
+    typename std::enable_if<
+      !std::is_base_of<Expression, Lhs>::value &&
+      std::is_base_of<ZeroType, Lhs>::value &&
+      std::is_base_of<Expression, Rhs>::value,
+    decltype(-rhs)>::type {
+  return -rhs;
 }
 
 #endif
