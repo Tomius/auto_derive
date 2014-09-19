@@ -21,13 +21,13 @@ class Variable : public Expression {
   }
 
   template<typename U, const char *str, const Variable<T, str>& v>
-  constexpr typename std::enable_if<str==name_, U>::type gradient() const {
-    return U(1);
+  constexpr typename std::enable_if<str==name_, One<U>>::type gradient() const {
+    return One<U>{};
   }
 
   template<typename U, const char *str, const Variable<T, str>& v>
   constexpr typename std::enable_if<str!=name_, U>::type gradient() const {
-    return U(0);
+    return Zero<U>{};
   }
 };
 

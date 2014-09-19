@@ -26,9 +26,39 @@ class Add<Lhs, Rhs,
 
   template<typename T, const char *str, const Variable<T, str>& v>
   constexpr auto gradient() const
-      -> decltype(lhs_.template gradient<T, str, v>() +
-        rhs_.template gradient<T, str, v>()) {
+      -> typename std::enable_if<
+        !std::is_same<Zero<T>, decltype(lhs_.template gradient<T, str, v>())>::value &&
+        !std::is_same<Zero<T>, decltype(rhs_.template gradient<T, str, v>())>::value,
+      decltype(lhs_.template gradient<T, str, v>() +
+      rhs_.template gradient<T, str, v>())>::type {
     return lhs_.template gradient<T, str, v>() + rhs_.template gradient<T, str, v>();
+  }
+
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const
+      -> typename std::enable_if<
+        std::is_same<Zero<T>, decltype(lhs_.template gradient<T, str, v>())>::value &&
+        !std::is_same<Zero<T>, decltype(rhs_.template gradient<T, str, v>())>::value,
+      decltype(rhs_.template gradient<T, str, v>())>::type {
+    return rhs_.template gradient<T, str, v>();
+  }
+
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const
+      -> typename std::enable_if<
+        !std::is_same<Zero<T>, decltype(lhs_.template gradient<T, str, v>())>::value &&
+        std::is_same<Zero<T>, decltype(rhs_.template gradient<T, str, v>())>::value,
+      decltype(lhs_.template gradient<T, str, v>())>::type {
+    return lhs_.template gradient<T, str, v>();
+  }
+
+  template<typename T, const char *str, const Variable<T, str>& v>
+  constexpr auto gradient() const
+      -> typename std::enable_if<
+        std::is_same<Zero<T>, decltype(lhs_.template gradient<T, str, v>())>::value &&
+        std::is_same<Zero<T>, decltype(rhs_.template gradient<T, str, v>())>::value,
+      Zero<T>>::type {
+    return Zero<T>{};
   }
 };
 
