@@ -1,10 +1,7 @@
 #ifndef OPERATORS_DIVIDE_HPP_
 #define OPERATORS_DIVIDE_HPP_
 
-#include <map>
-#include <string>
-#include <type_traits>
-#include "../expression.hpp"
+#include "../variable.hpp"
 #include "./subtract.hpp"
 #include "./multiply.hpp"
 #include "./unary_minus.hpp"
@@ -14,8 +11,7 @@ class Divide;
 
 template<typename Lhs, typename Rhs>
 class Divide<Lhs, Rhs,
-    typename std::enable_if<std::is_base_of<Expression, Lhs>::value &&
-                            std::is_base_of<Expression, Rhs>::value>::type>
+    enable_if_t<IsExpression<Lhs>::value && IsExpression<Rhs>::value>>
     : public Expression {
   const Lhs lhs_;
   const Rhs rhs_;
@@ -32,7 +28,7 @@ class Divide<Lhs, Rhs,
   template<typename T, const char *str>
   constexpr auto gradient() const
       -> decltype((lhs_.template gradient<T, str>() * rhs_ -
-                  rhs_.template gradient<T, str>() * lhs_) / (rhs_*rhs_)) {
+                   rhs_.template gradient<T, str>() * lhs_) / (rhs_*rhs_)) {
     return (lhs_.template gradient<T, str>() * rhs_ -
             rhs_.template gradient<T, str>() * lhs_) / (rhs_*rhs_);
   }
@@ -40,9 +36,7 @@ class Divide<Lhs, Rhs,
 
 template<typename Lhs, typename Constant>
 class Divide<Lhs, Constant,
-    typename std::enable_if<
-      std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<Expression, Constant>::value>::type>
+    enable_if_t<IsExpression<Lhs>::value && !IsExpression<Constant>::value>>
     : public Expression {
 
   const Lhs lhs_;
@@ -66,9 +60,8 @@ class Divide<Lhs, Constant,
 
 template<typename Constant, typename Rhs>
 class Divide<Constant, Rhs,
-    typename std::enable_if<
-      !std::is_base_of<Expression, Constant>::value &&
-      std::is_base_of<Expression, Rhs>::value>::type>
+    enable_if_t<!IsExpression<Constant>::value &&
+                            IsExpression<Rhs>::value>>
     : public Expression {
 
   const Constant lhs_;
@@ -84,50 +77,39 @@ class Divide<Constant, Rhs,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient() const ->
-      decltype(-lhs_ * rhs_.template gradient<T, str>() / (rhs_ * rhs_)) {
+  constexpr auto gradient() const
+      -> decltype(-lhs_ * rhs_.template gradient<T, str>() / (rhs_ * rhs_)) {
     return -lhs_ * rhs_.template gradient<T, str>() / (rhs_ * rhs_);
   }
 };
 
 template<typename Lhs, typename Rhs>
-constexpr auto operator/(Lhs lhs, Rhs rhs) ->
-    typename std::enable_if<
-        (std::is_base_of<Expression, Lhs>::value &&
-      std::is_base_of<Expression, Rhs>::value)
-        || (std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<Expression, Rhs>::value &&
-      !std::is_base_of<OneType, Rhs>::value)
-        || (!std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<OneType, Lhs>::value &&
-      std::is_base_of<Expression, Rhs>::value),
-    Divide<Lhs, Rhs, void>>::type {
+constexpr auto operator/(Lhs lhs, Rhs rhs)
+    -> enable_if_t<
+      (IsExpression<Lhs>::value && IsExpression<Rhs>::value)
+      || (IsExpression<Lhs>::value && !IsExpression<Rhs>::value &&
+          !IsOne<Rhs>::value && !IsZero<Rhs>::value)
+      || (!IsExpression<Lhs>::value && IsExpression<Rhs>::value &&
+          !IsZero<Lhs>::value),
+    Divide<Lhs, Rhs, void>> {
   return {lhs, rhs};
 }
 
 template<typename Lhs, typename T>
-constexpr Lhs operator/(Lhs lhs, PlusOne<T> rhs) {
+constexpr auto operator/(Lhs lhs, PlusOne<T> rhs)
+    -> enable_if_t<!IsZero<Lhs>::value, Lhs> {
   return lhs;
 }
 
-template<typename T, typename Rhs>
-constexpr Rhs operator/(PlusOne<T> lhs, Rhs rhs) {
-  return rhs;
+template<typename Lhs, typename T>
+constexpr auto operator/(Lhs lhs, MinusOne<T> rhs)
+    -> enable_if_t<!IsZero<Lhs>::value, decltype(-lhs)> {
+  return -lhs;
 }
 
 template<typename T, typename U>
 constexpr PlusOne<decltype(T{1}/U{1})> operator/(PlusOne<T> lhs, PlusOne<U> rhs) {
   return PlusOne<decltype(T{1}/U{1})>{};
-}
-
-template<typename Lhs, typename T>
-constexpr Lhs operator/(Lhs lhs, MinusOne<T> rhs) {
-  return -lhs;
-}
-
-template<typename T, typename Rhs>
-constexpr Rhs operator/(MinusOne<T> lhs, Rhs rhs) {
-  return -rhs;
 }
 
 template<typename T, typename U>
@@ -143,6 +125,41 @@ constexpr MinusOne<decltype(T{1}/U{-1})> operator/(PlusOne<T> lhs, MinusOne<U> r
 template<typename T, typename U>
 constexpr MinusOne<decltype(T{-1}/U{1})> operator/(MinusOne<T> lhs, PlusOne<U> rhs) {
   return MinusOne<decltype(T{-1}/U{1})>{};
+}
+
+template<typename Lhs, typename T>
+constexpr NaN<T> operator/(Lhs lhs, Zero<T> rhs) {
+  return NaN<T>{};
+}
+
+template<typename T, typename U>
+constexpr Zero<U> operator/(PlusOne<T> lhs, Zero<U> rhs) {
+  return NaN<T>{};
+}
+
+template<typename T, typename U>
+constexpr Zero<U> operator/(MinusOne<T> lhs, Zero<U> rhs) {
+  return NaN<T>{};
+}
+
+template<typename T, typename Rhs>
+constexpr Zero<T> operator/(Zero<T> lhs, Rhs rhs) {
+  return lhs;
+}
+
+template<typename T, typename U>
+constexpr Zero<T> operator/(Zero<T> lhs, PlusOne<U> rhs) {
+  return lhs;
+}
+
+template<typename T, typename U>
+constexpr Zero<T> operator/(Zero<T> lhs, MinusOne<U> rhs) {
+  return lhs;
+}
+
+template<typename T, typename U>
+constexpr NaN<decltype(T{0}/U{0})> operator/(Zero<T> lhs, Zero<U> rhs) {
+  return NaN<decltype(T{0}/U{0})>{};
 }
 
 #endif

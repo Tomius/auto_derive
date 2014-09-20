@@ -1,10 +1,7 @@
 #ifndef OPERATORS_UNARY_MINUS_H_
 #define OPERATORS_UNARY_MINUS_H_
 
-#include <map>
-#include <string>
-#include <type_traits>
-#include "../expression.hpp"
+#include "../variable.hpp"
 
 template<typename Expr>
 class UnaryMinus : public Expression {
@@ -28,9 +25,7 @@ class UnaryMinus : public Expression {
 
 template<typename Expr>
 constexpr auto operator-(Expr expr)
-    -> typename std::enable_if<
-      std::is_base_of<Expression, Expr>::value, UnaryMinus<Expr>
-    >::type {
+    -> enable_if_t<IsExpression<Expr>::value, UnaryMinus<Expr>> {
   return {expr};
 }
 

@@ -119,20 +119,21 @@ void test7() {
   assertEquals(-2268, dx3(context));
 }
 
-void test8() {
-  constexpr auto dx5 = ((13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x))
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>();
-
-  std::map<std::string, real> context;
-  context["x"] = 5;
-  context["y"] = 2;
-
-  assertEquals(-2364.0/875.0, dx5(context));
-}
+// This takes about 15 secs to compile...
+// The name of dx5's type is about 410 kB long
+// void test8() {
+//   constexpr auto dx5 = ((13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x))
+//                         .gradient<VARIABLE(x)>()
+//                         .gradient<VARIABLE(x)>()
+//                         .gradient<VARIABLE(x)>()
+//                         .gradient<VARIABLE(x)>()
+//                         .gradient<VARIABLE(x)>();
+//   std::map<std::string, real> context;
+//   context["x"] = 5;
+//   context["y"] = 2;
+//
+//   assertEquals(-2364.0/875.0, dx5(context));
+// }
 
 int main() {
   test0();
@@ -143,6 +144,6 @@ int main() {
   test5();
   test6();
   test7();
-  test8();
+  //test8();
   std::cout << "Test passed without any errors!" << std::endl;
 }

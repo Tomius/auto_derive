@@ -6,6 +6,7 @@
 #include <iostream>
 #include <type_traits>
 #include "./expression.hpp"
+#include "./constant.hpp"
 
 template<typename T, const char *name_>
 class Variable : public Expression {

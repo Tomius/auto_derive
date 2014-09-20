@@ -1,10 +1,7 @@
 #ifndef OPERATORS_MULTIPLY_HPP_
 #define OPERATORS_MULTIPLY_HPP_
 
-#include <map>
-#include <string>
-#include <type_traits>
-#include "../expression.hpp"
+#include "../variable.hpp"
 #include "./add.hpp"
 
 template<typename Lhs, typename Rhs, typename Enable = void>
@@ -12,8 +9,7 @@ class Multiply;
 
 template<typename Lhs, typename Rhs>
 class Multiply<Lhs, Rhs,
-    typename std::enable_if<std::is_base_of<Expression, Lhs>::value &&
-                            std::is_base_of<Expression, Rhs>::value>::type>
+    enable_if_t<IsExpression<Lhs>::value && IsExpression<Rhs>::value>>
     : public Expression {
   const Lhs lhs_;
   const Rhs rhs_;
@@ -30,7 +26,7 @@ class Multiply<Lhs, Rhs,
   template<typename T, const char *str>
   constexpr auto gradient() const
       -> decltype(lhs_ * rhs_.template gradient<T, str>() +
-                 rhs_ * lhs_.template gradient<T, str>()) {
+                  rhs_ * lhs_.template gradient<T, str>()) {
     return lhs_ * rhs_.template gradient<T, str>() +
     	     rhs_ * lhs_.template gradient<T, str>();
   }
@@ -38,9 +34,7 @@ class Multiply<Lhs, Rhs,
 
 template<typename Lhs, typename Constant>
 class Multiply<Lhs, Constant,
-    typename std::enable_if<
-      std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<Expression, Constant>::value>::type>
+    enable_if_t<IsExpression<Lhs>::value && !IsExpression<Constant>::value>>
     : public Expression {
 
   const Lhs lhs_;
@@ -64,9 +58,7 @@ class Multiply<Lhs, Constant,
 
 template<typename Constant, typename Rhs>
 class Multiply<Constant, Rhs,
-    typename std::enable_if<
-      !std::is_base_of<Expression, Constant>::value &&
-      std::is_base_of<Expression, Rhs>::value>::type>
+    enable_if_t<!IsExpression<Constant>::value && IsExpression<Rhs>::value>>
     : public Expression {
 
   const Constant lhs_;
@@ -82,37 +74,33 @@ class Multiply<Constant, Rhs,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient() const -> decltype(lhs_ * rhs_.template gradient<T, str>()) {
+  constexpr auto gradient() const
+      -> decltype(lhs_ * rhs_.template gradient<T, str>()) {
     return lhs_ * rhs_.template gradient<T, str>();
   }
 };
 
 template<typename Lhs, typename Rhs>
-constexpr auto operator*(Lhs lhs, Rhs rhs) ->
-    typename std::enable_if<
-        (std::is_base_of<Expression, Lhs>::value &&
-      std::is_base_of<Expression, Rhs>::value)
-        || (std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<Expression, Rhs>::value &&
-      !std::is_base_of<OneType, Rhs>::value &&
-      !std::is_base_of<ZeroType, Rhs>::value)
-        || (!std::is_base_of<Expression, Lhs>::value &&
-      !std::is_base_of<OneType, Lhs>::value &&
-      !std::is_base_of<ZeroType, Lhs>::value &&
-      std::is_base_of<Expression, Rhs>::value),
-    Multiply<Lhs, Rhs, void>>::type {
+constexpr auto operator*(Lhs lhs, Rhs rhs)
+    -> enable_if_t<
+        (IsExpression<Lhs>::value && IsExpression<Rhs>::value)
+        || (IsExpression<Lhs>::value && !IsExpression<Rhs>::value &&
+            !IsOne<Rhs>::value && !IsZero<Rhs>::value)
+        || (!IsExpression<Lhs>::value && IsExpression<Rhs>::value &&
+            !IsOne<Lhs>::value && !IsZero<Lhs>::value),
+    Multiply<Lhs, Rhs, void>> {
   return {lhs, rhs};
 }
 
 template<typename Lhs, typename T>
-constexpr auto operator*(Lhs lhs, PlusOne<T> rhs) ->
-    typename std::enable_if<!std::is_base_of<ZeroType, Lhs>::value, Lhs>::type {
+constexpr auto operator*(Lhs lhs, PlusOne<T> rhs)
+    -> enable_if_t<!IsZero<Lhs>::value, Lhs> {
   return lhs;
 }
 
 template<typename T, typename Rhs>
-constexpr auto operator*(PlusOne<T> lhs, Rhs rhs) ->
-    typename std::enable_if<!std::is_base_of<ZeroType, Rhs>::value, Rhs>::type {
+constexpr auto operator*(PlusOne<T> lhs, Rhs rhs)
+    -> enable_if_t<!IsZero<Rhs>::value, Rhs> {
   return rhs;
 }
 
@@ -122,16 +110,14 @@ constexpr PlusOne<decltype(T{1}*U{1})> operator*(PlusOne<T> lhs, PlusOne<U> rhs)
 }
 
 template<typename Lhs, typename T>
-constexpr auto operator*(Lhs lhs, MinusOne<T> rhs) ->
-    typename std::enable_if<!std::is_base_of<ZeroType, Lhs>::value,
-    decltype(-lhs)>::type {
+constexpr auto operator*(Lhs lhs, MinusOne<T> rhs)
+    -> enable_if_t<!IsZero<Lhs>::value, decltype(-lhs)> {
   return -lhs;
 }
 
 template<typename T, typename Rhs>
-constexpr auto operator*(MinusOne<T> lhs, Rhs rhs) ->
-    typename std::enable_if<!std::is_base_of<ZeroType, Rhs>::value,
-    decltype(-rhs)>::type {
+constexpr auto operator*(MinusOne<T> lhs, Rhs rhs)
+    -> enable_if_t<!IsZero<Rhs>::value, decltype(-rhs)> {
   return -rhs;
 }
 
