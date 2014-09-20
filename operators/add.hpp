@@ -7,8 +7,7 @@ template<typename Lhs, typename Rhs, typename Enable = void>
 class Add;
 
 template<typename Lhs, typename Rhs>
-class Add<Lhs, Rhs,
-    enable_if_t<IsExpression<Lhs>::value && IsExpression<Rhs>::value>>
+class Add<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
     : public Expression {
   const Lhs lhs_;
   const Rhs rhs_;
@@ -32,7 +31,7 @@ class Add<Lhs, Rhs,
 
 template<typename Lhs, typename Constant>
 class Add<Lhs, Constant,
-    enable_if_t<IsExpression<Lhs>::value && !IsExpression<Constant>::value>>
+    enable_if_t<IsExpression<Lhs>() && !IsExpression<Constant>()>>
     : public Expression {
 
   const Lhs lhs_;
@@ -56,7 +55,7 @@ class Add<Lhs, Constant,
 
 template<typename Constant, typename Rhs>
 class Add<Constant, Rhs,
-    enable_if_t<!IsExpression<Constant>::value && IsExpression<Rhs>::value>>
+    enable_if_t<!IsExpression<Constant>() && IsExpression<Rhs>()>>
     : public Expression {
 
   const Constant lhs_;
@@ -81,11 +80,9 @@ class Add<Constant, Rhs,
 template<typename Lhs, typename Rhs>
 constexpr auto operator+(Lhs lhs, Rhs rhs)
     -> enable_if_t<
-      (IsExpression<Lhs>::value && IsExpression<Rhs>::value)
-      || (IsExpression<Lhs>::value && !IsExpression<Rhs>::value &&
-          !IsZero<Rhs>::value)
-      || (!IsExpression<Lhs>::value && IsExpression<Rhs>::value &&
-          !IsZero<Lhs>::value),
+      (IsExpression<Lhs>() && IsExpression<Rhs>())
+      || (IsExpression<Lhs>() && !IsExpression<Rhs>() && !IsZero<Rhs>())
+      || (!IsExpression<Lhs>() && IsExpression<Rhs>() && !IsZero<Lhs>()),
     Add<Lhs, Rhs, void>> {
   return {lhs, rhs};
 }

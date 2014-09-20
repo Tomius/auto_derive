@@ -25,7 +25,7 @@ class UnaryMinus : public Expression {
 
 template<typename Expr>
 constexpr auto operator-(Expr expr)
-    -> enable_if_t<IsExpression<Expr>::value, UnaryMinus<Expr>> {
+    -> enable_if_t<IsExpression<Expr>(), UnaryMinus<Expr>> {
   return {expr};
 }
 

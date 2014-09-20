@@ -20,7 +20,9 @@ struct Constant {
 struct OneType { constexpr OneType() {} };
 
 template <typename T>
-using IsOne = std::is_base_of<OneType, T>;
+constexpr bool IsOne() {
+  return std::is_base_of<OneType, T>::value;
+}
 
 template<typename T>
 struct PlusOne : Constant<T>, OneType {
@@ -35,7 +37,9 @@ struct MinusOne : Constant<T>, OneType {
 struct ZeroType { constexpr ZeroType() {} };
 
 template <typename T>
-using IsZero = std::is_base_of<ZeroType, T>;
+constexpr bool IsZero() {
+  return std::is_base_of<ZeroType, T>::value;
+}
 
 template<typename T>
 struct Zero : Constant<T>, ZeroType {
@@ -45,7 +49,9 @@ struct Zero : Constant<T>, ZeroType {
 struct NaNType { constexpr NaNType() {} };
 
 template <typename T>
-using IsNaN = std::is_base_of<NaNType, T>;
+constexpr bool IsNaN() {
+  return std::is_base_of<NaNType, T>::value;
+}
 
 template<typename T>
 struct NaN : Constant<T>, NaNType {

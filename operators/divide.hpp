@@ -10,8 +10,7 @@ template<typename Lhs, typename Rhs, typename Enable = void>
 class Divide;
 
 template<typename Lhs, typename Rhs>
-class Divide<Lhs, Rhs,
-    enable_if_t<IsExpression<Lhs>::value && IsExpression<Rhs>::value>>
+class Divide<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
     : public Expression {
   const Lhs lhs_;
   const Rhs rhs_;
@@ -36,7 +35,7 @@ class Divide<Lhs, Rhs,
 
 template<typename Lhs, typename Constant>
 class Divide<Lhs, Constant,
-    enable_if_t<IsExpression<Lhs>::value && !IsExpression<Constant>::value>>
+    enable_if_t<IsExpression<Lhs>() && !IsExpression<Constant>()>>
     : public Expression {
 
   const Lhs lhs_;
@@ -60,8 +59,7 @@ class Divide<Lhs, Constant,
 
 template<typename Constant, typename Rhs>
 class Divide<Constant, Rhs,
-    enable_if_t<!IsExpression<Constant>::value &&
-                            IsExpression<Rhs>::value>>
+    enable_if_t<!IsExpression<Constant>() && IsExpression<Rhs>()>>
     : public Expression {
 
   const Constant lhs_;
@@ -86,24 +84,24 @@ class Divide<Constant, Rhs,
 template<typename Lhs, typename Rhs>
 constexpr auto operator/(Lhs lhs, Rhs rhs)
     -> enable_if_t<
-      (IsExpression<Lhs>::value && IsExpression<Rhs>::value)
-      || (IsExpression<Lhs>::value && !IsExpression<Rhs>::value &&
-          !IsOne<Rhs>::value && !IsZero<Rhs>::value)
-      || (!IsExpression<Lhs>::value && IsExpression<Rhs>::value &&
-          !IsZero<Lhs>::value),
+      (IsExpression<Lhs>() && IsExpression<Rhs>())
+      || (IsExpression<Lhs>() && !IsExpression<Rhs>() &&
+          !IsOne<Rhs>() && !IsZero<Rhs>())
+      || (!IsExpression<Lhs>() && IsExpression<Rhs>() &&
+          !IsZero<Lhs>()),
     Divide<Lhs, Rhs, void>> {
   return {lhs, rhs};
 }
 
 template<typename Lhs, typename T>
 constexpr auto operator/(Lhs lhs, PlusOne<T> rhs)
-    -> enable_if_t<!IsZero<Lhs>::value, Lhs> {
+    -> enable_if_t<!IsZero<Lhs>(), Lhs> {
   return lhs;
 }
 
 template<typename Lhs, typename T>
 constexpr auto operator/(Lhs lhs, MinusOne<T> rhs)
-    -> enable_if_t<!IsZero<Lhs>::value, decltype(-lhs)> {
+    -> enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
   return -lhs;
 }
 
