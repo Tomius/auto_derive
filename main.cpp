@@ -94,7 +94,20 @@ void test5() {
 }
 
 void test6() {
-  constexpr auto dx3 = (13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x)
+  constexpr auto dx3 = ((x*y*x)*(x*y*x))
+                        .gradient<VARIABLE(x)>()
+                        .gradient<VARIABLE(x)>()
+                        .gradient<VARIABLE(x)>();
+
+  std::map<std::string, real> context;
+  context["x"] = 5;
+  context["y"] = 2;
+
+  assertEquals(480, dx3(context));
+}
+
+void test7() {
+  constexpr auto dx3 = ((13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x))
                         .gradient<VARIABLE(x)>()
                         .gradient<VARIABLE(x)>()
                         .gradient<VARIABLE(x)>();
@@ -106,8 +119,8 @@ void test6() {
   assertEquals(-2268, dx3(context));
 }
 
-void test7() {
-  constexpr auto dx5 = (13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x)
+void test8() {
+  constexpr auto dx5 = ((13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x))
                         .gradient<VARIABLE(x)>()
                         .gradient<VARIABLE(x)>()
                         .gradient<VARIABLE(x)>()
@@ -130,5 +143,6 @@ int main() {
   test5();
   test6();
   test7();
+  test8();
   std::cout << "Test passed without any errors!" << std::endl;
 }
