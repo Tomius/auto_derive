@@ -4,6 +4,8 @@
 #include "../../variable.hpp"
 #include "./add.hpp"
 
+namespace auto_derive {
+
 template<typename Lhs, typename Rhs, typename Enable = void>
 class Multiply;
 
@@ -23,11 +25,9 @@ class Multiply<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(lhs_ * rhs_.gradient(v) +
-                  rhs_ * lhs_.gradient(v)) {
-    return lhs_ * rhs_.gradient(v) +
-    	     rhs_ * lhs_.gradient(v);
+  constexpr auto operator%(Variable<T, str> v) const
+      -> decltype(lhs_ * (rhs_ % v) + rhs_ * (lhs_ % v)) {
+    return lhs_ * (rhs_ % v) + rhs_ * (lhs_ % v);
   }
 };
 
@@ -49,9 +49,9 @@ class Multiply<Lhs, Constant,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(lhs_.gradient(v) * rhs_) {
-    return lhs_.gradient(v) * rhs_;
+  constexpr auto operator%(Variable<T, str> v) const
+      -> decltype((lhs_ % v) * rhs_) {
+    return (lhs_ % v) * rhs_;
   }
 };
 
@@ -73,9 +73,9 @@ class Multiply<Constant, Rhs,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(lhs_ * rhs_.gradient(v)) {
-    return lhs_ * rhs_.gradient(v);
+  constexpr auto operator%(Variable<T, str> v) const
+      -> decltype(lhs_ * (rhs_ % v)) {
+    return lhs_ * (rhs_ % v);
   }
 };
 
@@ -169,5 +169,7 @@ template<typename T, typename U>
 constexpr Zero<decltype(T{0}*U{0})> operator*(Zero<T> lhs, Zero<U> rhs) {
   return Zero<decltype(T{0}*U{0})>{};
 }
+
+} // namespace auto_derive
 
 #endif

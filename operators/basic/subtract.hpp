@@ -4,6 +4,8 @@
 #include "../../variable.hpp"
 #include "./unary_minus.hpp"
 
+namespace auto_derive {
+
 template<typename Lhs, typename Rhs, typename Enable = void>
 class Subtract;
 
@@ -23,10 +25,9 @@ class Subtract<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(lhs_.gradient(v) -
-                  rhs_.gradient(v)) {
-    return lhs_.gradient(v) - rhs_.gradient(v);
+  constexpr auto operator%(Variable<T, str> v) const
+      -> decltype((lhs_ % v) - (rhs_ % v)) {
+    return (lhs_ % v) - (rhs_ % v);
   }
 };
 
@@ -48,9 +49,8 @@ class Subtract<Lhs, Constant,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(lhs_.gradient(v)) {
-    return lhs_.gradient(v);
+  constexpr auto operator%(Variable<T, str> v) const -> decltype(lhs_ % v) {
+    return lhs_ % v;
   }
 };
 
@@ -72,9 +72,8 @@ class Subtract<Constant, Rhs,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(-rhs_.gradient(v)) {
-    return -rhs_.gradient(v);
+  constexpr auto operator%(Variable<T, str> v) const -> decltype(-(rhs_ % v)) {
+    return -(rhs_ % v);
   }
 };
 
@@ -112,5 +111,7 @@ template<typename T, typename U>
 constexpr Zero<decltype(T{-1}-U{-1})> operator-(MinusOne<T> lhs, MinusOne<U> rhs) {
   return Zero<decltype(T{-1}-U{-1})>{};
 }
+
+} // namespace auto_derive
 
 #endif

@@ -1,7 +1,9 @@
-#ifndef OPERATORS_UNARY_MINUS_H_
-#define OPERATORS_UNARY_MINUS_H_
+#ifndef OPERATORS_UNARY_MINUS_HPP_
+#define OPERATORS_UNARY_MINUS_HPP_
 
 #include "../../variable.hpp"
+
+namespace auto_derive {
 
 template<typename Expr>
 class UnaryMinus : public Expression {
@@ -17,9 +19,8 @@ class UnaryMinus : public Expression {
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(-expr_.gradient(v)) {
-    return -expr_.gradient(v);
+  constexpr auto operator%(Variable<T, str> v) const -> decltype(-(expr_ % v)) {
+    return -(expr_ % v);
   }
 };
 
@@ -43,5 +44,7 @@ template<typename T>
 constexpr PlusOne<T> operator-(MinusOne<T>) {
   return PlusOne<T>{};
 }
+
+} // namespace auto_derive
 
 #endif

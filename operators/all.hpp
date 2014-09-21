@@ -1,11 +1,12 @@
-#ifndef OPERATORS_ALL_H_
-#define OPERATORS_ALL_H_
+#ifndef OPERATORS_ALL_HPP_
+#define OPERATORS_ALL_HPP_
 
 #include "basic/add.hpp"
 #include "basic/divide.hpp"
 #include "basic/subtract.hpp"
 #include "basic/multiply.hpp"
 
-//#include "trig/sin_or_cos.hpp"
+#include "trig/sin.hpp"
+#include "trig/cos.hpp"
 
 #endif

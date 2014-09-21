@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <type_traits>
 #include "operators/all.hpp"
+#include "./gradient.hpp"
 
 using real = double;
 
@@ -24,10 +25,10 @@ void test0() {
   context["y"] = 2;
   assertEquals(15, func(context));
 
-  constexpr auto dx = func.gradient(x);
+  constexpr auto dx = gradient(func, x);
   static_assert(dx==0, "error");
 
-  constexpr real dy = func.gradient(y);
+  constexpr real dy = gradient(func, y);
   static_assert(dy==1, "error");
 }
 
@@ -35,8 +36,8 @@ void test1() {
   using variable::x;
   using variable::y;
   constexpr auto func = (2+(x-x)+7-x+y+4+x)*(37-x*y+2+x);
-  constexpr auto dx = func.gradient(x);
-  constexpr auto dy = func.gradient(y);
+  constexpr auto dx = gradient(func, x);
+  constexpr auto dy = gradient(func, y);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -49,9 +50,9 @@ void test1() {
 void test2() {
   using variable::x;
   constexpr auto func = x*x*x;
-  constexpr auto dx = func.gradient(x);
-  constexpr auto dx2 = dx.gradient(x);
-  constexpr auto dx3 = dx2.gradient(x);
+  constexpr auto dx = gradient(func, x);
+  constexpr auto dx2 = gradient(dx, x);
+  constexpr auto dx3 = gradient(dx2, x);
 
   std::map<std::string, real> context;
   context["x"] = 2;
@@ -64,8 +65,8 @@ void test2() {
 void test3() {
   using variable::x;
   using variable::y;
-  constexpr auto func = x + y.gradient(x);
-  constexpr auto func2 = y.gradient(x) + x;
+  constexpr auto func = x + gradient(y, x);
+  constexpr auto func2 = gradient(y, x) + x;
   static_assert(std::is_same<decltype(x), decltype(func)>::value, "");
   static_assert(std::is_same<decltype(x), decltype(func2)>::value, "");
 }
@@ -74,8 +75,8 @@ void test4() {
   using variable::x;
   using variable::y;
   constexpr auto func = (13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x);
-  constexpr auto dx = func.gradient(x);
-  constexpr auto dy = func.gradient(y);
+  constexpr auto dx = gradient(func, x);
+  constexpr auto dy = gradient(func, y);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -90,8 +91,8 @@ void test5() {
   using variable::x;
   using variable::y;
   constexpr auto func = (13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x);
-  constexpr auto dx = func.gradient(x);
-  constexpr auto dy = func.gradient(y);
+  constexpr auto dx = gradient(func, x);
+  constexpr auto dy = gradient(func, y);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -105,10 +106,8 @@ void test5() {
 void test6() {
   using variable::x;
   using variable::y;
-  constexpr auto dx3 = ((13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x))
-                        .gradient(x)
-                        .gradient(x)
-                        .gradient(x);
+  constexpr auto dx3 = gradient(gradient(gradient(
+      ((13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x)), x), x), x);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -117,6 +116,16 @@ void test6() {
   assertEquals(-2268, dx3(context));
 }
 
+void test7() {
+  using variable::x;
+  constexpr auto func = cos(sin(x + M_PI));
+  constexpr auto dx = gradient(func, x);
+
+  std::map<std::string, real> context;
+  context["x"] = 0;
+
+  assertEquals(0, dx(context));
+}
 
 int main() {
   test0();
@@ -126,5 +135,6 @@ int main() {
   test4();
   test5();
   test6();
+  test7();
   std::cout << "Test passed without any errors!" << std::endl;
 }

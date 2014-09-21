@@ -8,6 +8,8 @@
 #include "./expression.hpp"
 #include "./constant.hpp"
 
+namespace auto_derive {
+
 template<typename T, const char *name_>
 class Variable : public Expression {
  public:
@@ -20,19 +22,23 @@ class Variable : public Expression {
   }
 
   template<typename U, const char *str>
-  constexpr enable_if_t<str==name_, PlusOne<U>> gradient(Variable<U, str> v) const {
+  constexpr auto operator%(Variable<U, str> v) const
+      -> enable_if_t<str==name_, PlusOne<U>> {
     return PlusOne<U>{};
   }
 
   template<typename U, const char *str>
-  constexpr enable_if_t<str!=name_, Zero<U>> gradient(Variable<U, str> v) const {
+  constexpr auto operator%(Variable<U, str> v) const
+      -> enable_if_t<str!=name_, Zero<U>> {
     return Zero<U>{};
   }
 };
 
+} // namespace auto_derive
+
 // Variables must be defined outside of functions...
 #define DECLARE_VARIABLE(T, X) \
   constexpr char _STRING_OF_VARIABLE_##X[] = #X; \
-  constexpr Variable<T, _STRING_OF_VARIABLE_##X> X;
+  constexpr auto_derive::Variable<T, _STRING_OF_VARIABLE_##X> X;
 
 #endif

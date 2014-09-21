@@ -1,5 +1,5 @@
-#ifndef CONSTANT_H_
-#define CONSTANT_H_
+#ifndef CONSTANT_HPP_
+#define CONSTANT_HPP_
 
 #include <cmath>
 #include <type_traits>
@@ -9,6 +9,8 @@
 // the addition is a zero, then we can optimize an Add node out.
 // Same goes for +-1 and Mult/Div. But of course, the real power comes from
 // 0 * x = 0. To recognize these, ones zeros must have their own types.
+
+namespace auto_derive {
 
 template<typename T>
 struct Constant {
@@ -58,5 +60,6 @@ struct NaN : Constant<T>, NaNType {
   constexpr NaN() : Constant<T>{NAN} {}
 };
 
+} // namespace auto_derive
 
 #endif

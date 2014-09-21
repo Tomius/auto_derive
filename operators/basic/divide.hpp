@@ -6,6 +6,8 @@
 #include "./multiply.hpp"
 #include "./unary_minus.hpp"
 
+namespace auto_derive {
+
 template<typename Lhs, typename Rhs, typename Enable = void>
 class Divide;
 
@@ -25,11 +27,9 @@ class Divide<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype((lhs_.gradient(v) * rhs_ -
-                   rhs_.gradient(v) * lhs_) / (rhs_*rhs_)) {
-    return (lhs_.gradient(v) * rhs_ -
-            rhs_.gradient(v) * lhs_) / (rhs_*rhs_);
+  constexpr auto operator%(Variable<T, str> v) const
+      -> decltype(((lhs_ % v) * rhs_ - (rhs_ % v) * lhs_) / (rhs_*rhs_)) {
+    return ((lhs_ % v) * rhs_ - (rhs_ % v) * lhs_) / (rhs_*rhs_);
   }
 };
 
@@ -51,9 +51,9 @@ class Divide<Lhs, Constant,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(lhs_.gradient(v) / rhs_) {
-    return lhs_.gradient(v) / rhs_;
+  constexpr auto operator%(Variable<T, str> v) const
+      -> decltype((lhs_ % v) / rhs_) {
+    return (lhs_ % v) / rhs_;
   }
 };
 
@@ -75,9 +75,9 @@ class Divide<Constant, Rhs,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient(Variable<T, str> v) const
-      -> decltype(-lhs_ * rhs_.gradient(v) / (rhs_ * rhs_)) {
-    return -lhs_ * rhs_.gradient(v) / (rhs_ * rhs_);
+  constexpr auto operator%(Variable<T, str> v) const
+      -> decltype(-lhs_ * (rhs_ % v) / (rhs_ * rhs_)) {
+    return -lhs_ * (rhs_ % v) / (rhs_ * rhs_);
   }
 };
 
@@ -159,5 +159,7 @@ template<typename T, typename U>
 constexpr NaN<decltype(T{0}/U{0})> operator/(Zero<T> lhs, Zero<U> rhs) {
   return NaN<decltype(T{0}/U{0})>{};
 }
+
+} // namespace auto_derive
 
 #endif
