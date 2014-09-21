@@ -3,20 +3,20 @@
 #include <iostream>
 #include <typeinfo>
 #include <type_traits>
-#include "./variable.hpp"
-#include "operators/add.hpp"
-#include "operators/divide.hpp"
-#include "operators/subtract.hpp"
-#include "operators/multiply.hpp"
+#include "operators/all.hpp"
 
 using real = double;
 
+namespace variable {
 DECLARE_VARIABLE(real, x)
 DECLARE_VARIABLE(real, y)
+}
 
 #define assertEquals(a, b) assert(std::fabs((a)-(b)) < 1e-5)
 
 void test0() {
+  using variable::x;
+  using variable::y;
   constexpr auto func = 2+(x-x)+7-x+y+4+x;
 
   std::map<std::string, real> context;
@@ -24,17 +24,19 @@ void test0() {
   context["y"] = 2;
   assertEquals(15, func(context));
 
-  constexpr real dx = func.gradient<VARIABLE(x)>();
+  constexpr auto dx = func.gradient(x);
   static_assert(dx==0, "error");
 
-  constexpr real dy = func.gradient<VARIABLE(y)>();
+  constexpr real dy = func.gradient(y);
   static_assert(dy==1, "error");
 }
 
 void test1() {
+  using variable::x;
+  using variable::y;
   constexpr auto func = (2+(x-x)+7-x+y+4+x)*(37-x*y+2+x);
-  constexpr auto dx = func.gradient<VARIABLE(x)>();
-  constexpr auto dy = func.gradient<VARIABLE(y)>();
+  constexpr auto dx = func.gradient(x);
+  constexpr auto dy = func.gradient(y);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -45,10 +47,11 @@ void test1() {
 }
 
 void test2() {
+  using variable::x;
   constexpr auto func = x*x*x;
-  constexpr auto dx = func.gradient<VARIABLE(x)>();
-  constexpr auto dx2 = dx.gradient<VARIABLE(x)>();
-  constexpr auto dx3 = dx2.gradient<VARIABLE(x)>();
+  constexpr auto dx = func.gradient(x);
+  constexpr auto dx2 = dx.gradient(x);
+  constexpr auto dx3 = dx2.gradient(x);
 
   std::map<std::string, real> context;
   context["x"] = 2;
@@ -59,16 +62,20 @@ void test2() {
 }
 
 void test3() {
-  constexpr auto func = x + y.gradient<VARIABLE(x)>();
-  constexpr auto func2 = y.gradient<VARIABLE(x)>() + x;
+  using variable::x;
+  using variable::y;
+  constexpr auto func = x + y.gradient(x);
+  constexpr auto func2 = y.gradient(x) + x;
   static_assert(std::is_same<decltype(x), decltype(func)>::value, "");
   static_assert(std::is_same<decltype(x), decltype(func2)>::value, "");
 }
 
 void test4() {
+  using variable::x;
+  using variable::y;
   constexpr auto func = (13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x);
-  constexpr auto dx = func.gradient<VARIABLE(x)>();
-  constexpr auto dy = func.gradient<VARIABLE(y)>();
+  constexpr auto dx = func.gradient(x);
+  constexpr auto dy = func.gradient(y);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -80,9 +87,11 @@ void test4() {
 }
 
 void test5() {
+  using variable::x;
+  using variable::y;
   constexpr auto func = (13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x);
-  constexpr auto dx = func.gradient<VARIABLE(x)>();
-  constexpr auto dy = func.gradient<VARIABLE(y)>();
+  constexpr auto dx = func.gradient(x);
+  constexpr auto dy = func.gradient(y);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -94,23 +103,12 @@ void test5() {
 }
 
 void test6() {
-  constexpr auto dx3 = ((x*y*x)*(x*y*x))
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>();
-
-  std::map<std::string, real> context;
-  context["x"] = 5;
-  context["y"] = 2;
-
-  assertEquals(480, dx3(context));
-}
-
-void test7() {
+  using variable::x;
+  using variable::y;
   constexpr auto dx3 = ((13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x))
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>()
-                        .gradient<VARIABLE(x)>();
+                        .gradient(x)
+                        .gradient(x)
+                        .gradient(x);
 
   std::map<std::string, real> context;
   context["x"] = 5;
@@ -119,21 +117,6 @@ void test7() {
   assertEquals(-2268, dx3(context));
 }
 
-// This takes about 15 secs to compile...
-// The name of dx5's type is about 410 kB long
-// void test8() {
-//   constexpr auto dx5 = ((13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x))
-//                         .gradient<VARIABLE(x)>()
-//                         .gradient<VARIABLE(x)>()
-//                         .gradient<VARIABLE(x)>()
-//                         .gradient<VARIABLE(x)>()
-//                         .gradient<VARIABLE(x)>();
-//   std::map<std::string, real> context;
-//   context["x"] = 5;
-//   context["y"] = 2;
-//
-//   assertEquals(-2364.0/875.0, dx5(context));
-// }
 
 int main() {
   test0();
@@ -143,7 +126,5 @@ int main() {
   test4();
   test5();
   test6();
-  test7();
-  //test8();
   std::cout << "Test passed without any errors!" << std::endl;
 }

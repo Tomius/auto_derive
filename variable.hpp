@@ -13,8 +13,6 @@ class Variable : public Expression {
  public:
   constexpr Variable() {}
 
-  using value_type = T;
-
   constexpr const char * name() const { return name_; }
 
   T operator()(const std::map<std::string, T>& context) const {
@@ -22,21 +20,19 @@ class Variable : public Expression {
   }
 
   template<typename U, const char *str>
-  constexpr typename std::enable_if<str==name_, PlusOne<U>>::type gradient() const {
+  constexpr enable_if_t<str==name_, PlusOne<U>> gradient(Variable<U, str> v) const {
     return PlusOne<U>{};
   }
 
   template<typename U, const char *str>
-  constexpr typename std::enable_if<str!=name_, Zero<U>>::type gradient() const {
+  constexpr enable_if_t<str!=name_, Zero<U>> gradient(Variable<U, str> v) const {
     return Zero<U>{};
   }
 };
 
-// Variables must be defined in global namespace...
+// Variables must be defined outside of functions...
 #define DECLARE_VARIABLE(T, X) \
   constexpr char _STRING_OF_VARIABLE_##X[] = #X; \
   constexpr Variable<T, _STRING_OF_VARIABLE_##X> X;
-
-#define VARIABLE(X) decltype(X)::value_type, _STRING_OF_VARIABLE_##X
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef OPERATORS_MULTIPLY_HPP_
 #define OPERATORS_MULTIPLY_HPP_
 
-#include "../variable.hpp"
+#include "../../variable.hpp"
 #include "./add.hpp"
 
 template<typename Lhs, typename Rhs, typename Enable = void>
@@ -23,11 +23,11 @@ class Multiply<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient() const
-      -> decltype(lhs_ * rhs_.template gradient<T, str>() +
-                  rhs_ * lhs_.template gradient<T, str>()) {
-    return lhs_ * rhs_.template gradient<T, str>() +
-    	     rhs_ * lhs_.template gradient<T, str>();
+  constexpr auto gradient(Variable<T, str> v) const
+      -> decltype(lhs_ * rhs_.gradient(v) +
+                  rhs_ * lhs_.gradient(v)) {
+    return lhs_ * rhs_.gradient(v) +
+    	     rhs_ * lhs_.gradient(v);
   }
 };
 
@@ -49,9 +49,9 @@ class Multiply<Lhs, Constant,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient() const
-      -> decltype(lhs_.template gradient<T, str>() * rhs_) {
-    return lhs_.template gradient<T, str>() * rhs_;
+  constexpr auto gradient(Variable<T, str> v) const
+      -> decltype(lhs_.gradient(v) * rhs_) {
+    return lhs_.gradient(v) * rhs_;
   }
 };
 
@@ -73,9 +73,9 @@ class Multiply<Constant, Rhs,
   }
 
   template<typename T, const char *str>
-  constexpr auto gradient() const
-      -> decltype(lhs_ * rhs_.template gradient<T, str>()) {
-    return lhs_ * rhs_.template gradient<T, str>();
+  constexpr auto gradient(Variable<T, str> v) const
+      -> decltype(lhs_ * rhs_.gradient(v)) {
+    return lhs_ * rhs_.gradient(v);
   }
 };
 
