@@ -18,14 +18,12 @@ class Add<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
   constexpr Add(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs_(context) + rhs_(context)) {
+  auto operator()(const std::map<std::string, T>& context) const {
     return lhs_(context) + rhs_(context);
   }
 
   template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const
-      -> decltype((lhs_ % v) + (rhs_ % v)) {
+  constexpr auto operator%(Variable<T, str> v) const {
     return (lhs_ % v) + (rhs_ % v);
   }
 };
@@ -42,13 +40,12 @@ class Add<Lhs, Constant,
   constexpr Add(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs_(context) + rhs_) {
+  auto operator()(const std::map<std::string, T>& context) const {
     return lhs_(context) + rhs_;
   }
 
   template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const -> decltype(lhs_ % v) {
+  constexpr auto operator%(Variable<T, str> v) const {
     return lhs_ % v;
   }
 };
@@ -65,24 +62,21 @@ class Add<Constant, Rhs,
   constexpr Add(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
   template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs_ + rhs_(context)) {
+  auto operator()(const std::map<std::string, T>& context) const {
     return lhs_ + rhs_(context);
   }
 
   template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const
-      -> decltype(rhs_ % v) {
+  constexpr auto operator%(Variable<T, str> v) const {
     return rhs_ % v;
   }
 };
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator+(Lhs lhs, Rhs rhs)
-    -> enable_if_t<
-      (IsExpression<Lhs>() && IsExpression<Rhs>())
-      || (IsExpression<Lhs>() && !IsExpression<Rhs>() && !IsZero<Rhs>())
-      || (!IsExpression<Lhs>() && IsExpression<Rhs>() && !IsZero<Lhs>()),
+    -> enable_if_t<(
+      IsExpression<Lhs>() && !IsZero<Rhs>())
+      || (IsExpression<Rhs>() && !IsZero<Lhs>()),
     Add<Lhs, Rhs, void>> {
   return {lhs, rhs};
 }

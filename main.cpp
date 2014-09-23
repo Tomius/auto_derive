@@ -1,7 +1,6 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include <typeinfo>
 #include <type_traits>
 #include "operators/all.hpp"
 #include "./gradient.hpp"
@@ -9,8 +8,8 @@
 using real = double;
 
 namespace variable {
-DECLARE_VARIABLE(real, x)
-DECLARE_VARIABLE(real, y)
+  DECLARE_VARIABLE(real, x);
+  DECLARE_VARIABLE(real, y);
 }
 
 #define assertEquals(a, b) assert(std::fabs((a)-(b)) < 1e-5)

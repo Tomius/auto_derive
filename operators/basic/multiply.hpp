@@ -18,15 +18,13 @@ class Multiply<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>
  public:
   constexpr Multiply(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs_(context) * rhs_(context)) {
+  template<typename VarT>
+  auto operator()(const std::map<std::string, VarT>& context) const {
     return lhs_(context) * rhs_(context);
   }
 
-  template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const
-      -> decltype(lhs_ * (rhs_ % v) + rhs_ * (lhs_ % v)) {
+  template<typename VarT, const char *var_name>
+  constexpr auto operator%(Variable<VarT, var_name> v) const {
     return lhs_ * (rhs_ % v) + rhs_ * (lhs_ % v);
   }
 };
@@ -42,15 +40,13 @@ class Multiply<Lhs, Constant,
  public:
   constexpr Multiply(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs_(context) * rhs_) {
+  template<typename VarT>
+  auto operator()(const std::map<std::string, VarT>& context) const {
     return lhs_(context) * rhs_;
   }
 
-  template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const
-      -> decltype((lhs_ % v) * rhs_) {
+  template<typename VarT, const char *var_name>
+  constexpr auto operator%(Variable<VarT, var_name> v) const {
     return (lhs_ % v) * rhs_;
   }
 };
@@ -66,15 +62,13 @@ class Multiply<Constant, Rhs,
  public:
   constexpr Multiply(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(lhs_ * rhs_(context)) {
+  template<typename VarT>
+  auto operator()(const std::map<std::string, VarT>& context) const {
     return lhs_ * rhs_(context);
   }
 
-  template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const
-      -> decltype(lhs_ * (rhs_ % v)) {
+  template<typename VarT, const char *var_name>
+  constexpr auto operator%(Variable<VarT, var_name> v) const {
     return lhs_ * (rhs_ % v);
   }
 };
@@ -82,11 +76,8 @@ class Multiply<Constant, Rhs,
 template<typename Lhs, typename Rhs>
 constexpr auto operator*(Lhs lhs, Rhs rhs)
     -> enable_if_t<
-        (IsExpression<Lhs>() && IsExpression<Rhs>())
-        || (IsExpression<Lhs>() && !IsExpression<Rhs>() &&
-            !IsOne<Rhs>() && !IsZero<Rhs>())
-        || (!IsExpression<Lhs>() && IsExpression<Rhs>() &&
-            !IsOne<Lhs>() && !IsZero<Lhs>()),
+        (IsExpression<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
+        || (IsExpression<Rhs>() && !IsOne<Lhs>() && !IsZero<Lhs>()),
     Multiply<Lhs, Rhs, void>> {
   return {lhs, rhs};
 }

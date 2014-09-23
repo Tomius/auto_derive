@@ -13,13 +13,12 @@ class UnaryMinus : public Expression {
   constexpr UnaryMinus(Expr expr) : expr_(expr) {}
 
   template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(-expr_(context)) {
+  auto operator()(const std::map<std::string, T>& context) const {
     return -expr_(context);
   }
 
   template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const -> decltype(-(expr_ % v)) {
+  constexpr auto operator%(Variable<T, str> v) const {
     return -(expr_ % v);
   }
 };

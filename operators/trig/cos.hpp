@@ -16,8 +16,7 @@ class Cos : public Expression {
   constexpr Expr expr() const { return expr_; }
 
   template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const
-      -> decltype(std::cos(expr_(context))) {
+  auto operator()(const std::map<std::string, T>& context) const {
     return std::cos(expr_(context));
   }
 };
@@ -35,8 +34,7 @@ constexpr Cos<T> cos(T t) {
 namespace auto_derive {
 
 template <typename Expr, typename VarT, const char *var_name>
-constexpr auto operator%(Cos<Expr> cos, Variable<VarT, var_name> v)
-    -> decltype(-sin(cos.expr()) * (cos.expr() % v)) {
+constexpr auto operator%(Cos<Expr> cos, Variable<VarT, var_name> v) {
   return -sin(cos.expr()) * (cos.expr() % v);
 }
 
