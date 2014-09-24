@@ -12,17 +12,16 @@ namespace variable {
   DECLARE_VARIABLE(real, y);
 }
 
-#define assertEquals(a, b) assert(std::fabs((a)-(b)) < 1e-5)
+constexpr double equals(double a, double b) {
+  return a-b > 0 ? a-b < 1e-5 : b-a < 1e-5;
+}
 
 void test0() {
   using variable::x;
   using variable::y;
   constexpr auto func = 2+(x-x)+7-x+y+4+x;
 
-  std::map<std::string, real> context;
-  context["x"] = 5;
-  context["y"] = 2;
-  assertEquals(15, func(context));
+  static_assert(15 == func(x=5, y=2), "error");
 
   constexpr auto dx = gradient(func, x);
   static_assert(dx==0, "error");
@@ -38,12 +37,9 @@ void test1() {
   constexpr auto dx = gradient(func, x);
   constexpr auto dy = gradient(func, y);
 
-  std::map<std::string, real> context;
-  context["x"] = 5;
-  context["y"] = 2;
-  assertEquals(510, func(context));
-  assertEquals(-15, dx(context));
-  assertEquals(-41, dy(context));
+  static_assert(510 == func(x=5, y=2), "error");
+  static_assert(-15 == dx(x=5, y=2), "error");
+  static_assert(-41 == dy(x=5, y=2), "error");
 }
 
 void test2() {
@@ -53,12 +49,10 @@ void test2() {
   constexpr auto dx2 = gradient(dx, x);
   constexpr auto dx3 = gradient(dx2, x);
 
-  std::map<std::string, real> context;
-  context["x"] = 2;
-  assertEquals(1*8, func(context));
-  assertEquals(3*4, dx(context));
-  assertEquals(6*2, dx2(context));
-  static_assert(dx3==6, "error");
+  static_assert(1*8 == func(x=2), "error");
+  static_assert(3*4 == dx(x=2), "error");
+  static_assert(6*2 == dx2(x=2), "error");
+  static_assert(dx3 == 6, "error");
 }
 
 void test3() {
@@ -66,6 +60,7 @@ void test3() {
   using variable::y;
   constexpr auto func = x + gradient(y, x);
   constexpr auto func2 = gradient(y, x) + x;
+
   static_assert(std::is_same<decltype(x), decltype(func)>::value, "");
   static_assert(std::is_same<decltype(x), decltype(func2)>::value, "");
 }
@@ -77,13 +72,9 @@ void test4() {
   constexpr auto dx = gradient(func, x);
   constexpr auto dy = gradient(func, y);
 
-  std::map<std::string, real> context;
-  context["x"] = 5;
-  context["y"] = 2;
-
-  assertEquals(-945, func(context));
-  assertEquals(-17199, dx(context));
-  assertEquals(-18920, dy(context));
+  static_assert(-945 == func(x=5, y=2), "error");
+  static_assert(-17199 == dx(x=5, y=2), "error");
+  static_assert(-18920 == dy(x=5, y=2), "error");
 }
 
 void test5() {
@@ -93,13 +84,9 @@ void test5() {
   constexpr auto dx = gradient(func, x);
   constexpr auto dy = gradient(func, y);
 
-  std::map<std::string, real> context;
-  context["x"] = 5;
-  context["y"] = 2;
-
-  assertEquals(-1683.0/14.0, func(context));
-  assertEquals(-50.5, dx(context));
-  assertEquals(5686.0/175.0, dy(context));
+  static_assert(equals(-1683.0/14.0, func(x=5, y=2)), "error");
+  static_assert(equals(-50.5, dx(x=5, y=2)), "error");
+  static_assert(equals(5686.0/175.0, dy(x=5, y=2)), "error");
 }
 
 void test6() {
@@ -108,11 +95,7 @@ void test6() {
   constexpr auto dx3 = gradient(gradient(gradient(
       ((13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x)), x), x), x);
 
-  std::map<std::string, real> context;
-  context["x"] = 5;
-  context["y"] = 2;
-
-  assertEquals(-2268, dx3(context));
+  static_assert(-2268 == dx3(x=5, y=2), "error");
 }
 
 void test7() {
@@ -120,20 +103,10 @@ void test7() {
   constexpr auto func = cos(sin(x + M_PI));
   constexpr auto dx = gradient(func, x);
 
-  std::map<std::string, real> context;
-  context["x"] = 0;
-
-  assertEquals(0, dx(context));
+  assert(equals(0, dx(x=0)));
 }
 
 int main() {
-  test0();
-  test1();
-  test2();
-  test3();
-  test4();
-  test5();
-  test6();
   test7();
   std::cout << "Test passed without any errors!" << std::endl;
 }

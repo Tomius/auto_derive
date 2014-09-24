@@ -20,9 +20,9 @@ class Divide<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
  public:
   constexpr Divide(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename VarT>
-  auto operator()(const std::map<std::string, VarT>& context) const {
-    return lhs_(context) / rhs_(context);
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return lhs_(args...) / rhs_(args...);
   }
 
   template<typename VarT, const char *var_name>
@@ -42,9 +42,9 @@ class Divide<Lhs, Constant,
  public:
   constexpr Divide(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename VarT>
-  auto operator()(const std::map<std::string, VarT>& context) const {
-    return lhs_(context) / rhs_;
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return lhs_(args...) / rhs_;
   }
 
   template<typename VarT, const char *var_name>
@@ -64,9 +64,9 @@ class Divide<Constant, Rhs,
  public:
   constexpr Divide(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename VarT>
-  auto operator()(const std::map<std::string, VarT>& context) const {
-    return lhs_ / rhs_(context);
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return lhs_ / rhs_(args...);
   }
 
   template<typename VarT, const char *var_name>

@@ -13,11 +13,11 @@ class Cos : public Expression {
  public:
   constexpr Cos(Expr expr) : expr_(expr) {}
 
-  constexpr Expr expr() const { return expr_; }
+  constexpr const Expr& expr() const { return expr_; }
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const {
-    return std::cos(expr_(context));
+  template<typename... Args>
+  auto operator()(Args&&... args) const {
+    return std::cos(expr_(args...));
   }
 };
 

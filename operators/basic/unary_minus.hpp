@@ -7,14 +7,14 @@ namespace auto_derive {
 
 template<typename Expr>
 class UnaryMinus : public Expression {
-  Expr expr_;
+  const Expr expr_;
 
  public:
   constexpr UnaryMinus(Expr expr) : expr_(expr) {}
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const {
-    return -expr_(context);
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return -expr_(args...);
   }
 
   template<typename T, const char *str>

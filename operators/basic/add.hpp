@@ -17,9 +17,9 @@ class Add<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
  public:
   constexpr Add(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const {
-    return lhs_(context) + rhs_(context);
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return lhs_(args...) + rhs_(args...);
   }
 
   template<typename T, const char *str>
@@ -39,9 +39,9 @@ class Add<Lhs, Constant,
  public:
   constexpr Add(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const {
-    return lhs_(context) + rhs_;
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return lhs_(args...) + rhs_;
   }
 
   template<typename T, const char *str>
@@ -61,9 +61,9 @@ class Add<Constant, Rhs,
  public:
   constexpr Add(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  template<typename T>
-  auto operator()(const std::map<std::string, T>& context) const {
-    return lhs_ + rhs_(context);
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return lhs_ + rhs_(args...);
   }
 
   template<typename T, const char *str>

@@ -10,14 +10,30 @@
 namespace auto_derive {
 
 template<typename T, const char *name_>
+struct VariableValue {
+  T value;
+  constexpr VariableValue(T value) : value(value) {}
+};
+
+template<typename T, const char *name_>
 class Variable : public Expression {
  public:
   constexpr Variable() {}
 
   constexpr const char * name() const { return name_; }
 
-  T operator()(const std::map<std::string, T>& context) const {
-    return context.at(name_);
+  template<typename U, typename... Args>
+  constexpr T operator()(U val, Args&&... args) const {
+    return operator()(args...);
+  }
+
+  template<typename... Args>
+  constexpr T operator()(VariableValue<T, name_> val, Args&&... args) const {
+    return val.value;
+  }
+
+  constexpr auto operator=(T value) const {
+    return VariableValue<T, name_>(value);
   }
 
   template<typename U, const char *str>
