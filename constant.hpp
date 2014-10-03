@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <type_traits>
+#include "./expression.hpp"
 
 // Ones and zeros are very special in terms of functions, for example
 // x + 0 = x. Considering this, if we can recognize that one operand of
@@ -12,11 +13,30 @@
 
 namespace auto_derive {
 
+struct ConstantType {
+  constexpr ConstantType() {}
+};
+
+template <typename T>
+constexpr bool IsConstant() {
+  return std::is_base_of<ConstantType, T>::value;
+}
+
+template <typename T>
+constexpr bool IsScalar() {
+  return !IsExpression<T>() && !IsConstant<T>();
+}
+
 template<typename T>
-struct Constant {
+struct Constant : public ConstantType {
   const T value;
   constexpr Constant(T value) : value(value) {}
   constexpr operator T() const { return value; }
+
+  template<typename... Args>
+  constexpr auto operator()(Args&&... args) const {
+    return value;
+  }
 };
 
 struct OneType { constexpr OneType() {} };
@@ -61,5 +81,14 @@ struct NaN : Constant<T>, NaNType {
 };
 
 } // namespace auto_derive
+
+#include "./variable.hpp"
+
+namespace auto_derive {
+  template<typename T, typename VarT, const char* var_name>
+  constexpr auto gradient(Constant<T> self, Variable<VarT, var_name> v) {
+    return Zero<VarT>{};
+  }
+}
 
 #endif

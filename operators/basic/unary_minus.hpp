@@ -2,15 +2,13 @@
 #define OPERATORS_UNARY_MINUS_HPP_
 
 #include "../../variable.hpp"
+#include "../unary_operator.hpp"
 
 namespace auto_derive {
 
 template<typename Expr>
-class UnaryMinus : public Expression {
-  const Expr expr_;
-
- public:
-  constexpr UnaryMinus(Expr expr) : expr_(expr) {}
+class UnaryMinus : public UnaryOperator<Expr> {
+  USING_UNARY_OPERATOR(Expr); 
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
@@ -18,14 +16,14 @@ class UnaryMinus : public Expression {
   }
 
   template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const {
-    return -(expr_ % v);
+  friend constexpr auto gradient(UnaryMinus self, Variable<T, str> v) {
+    return -gradient(self.expr_, v);
   }
 };
 
 template<typename Expr>
 constexpr auto operator-(Expr expr)
-    -> enable_if_t<IsExpression<Expr>(), UnaryMinus<Expr>> {
+    -> std::enable_if_t<IsExpression<Expr>(), UnaryMinus<Expr>> {
   return {expr};
 }
 

@@ -2,23 +2,16 @@
 #define OPERATORS_DIVIDE_HPP_
 
 #include "../../variable.hpp"
+#include "../binary_operator.hpp"
 #include "./subtract.hpp"
 #include "./multiply.hpp"
 #include "./unary_minus.hpp"
 
 namespace auto_derive {
 
-template<typename Lhs, typename Rhs, typename Enable = void>
-class Divide;
-
 template<typename Lhs, typename Rhs>
-class Divide<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
-    : public Expression {
-  const Lhs lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Divide(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
+class Divide : public BinaryOperator<Lhs, Rhs> {
+  USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
@@ -26,73 +19,30 @@ class Divide<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
   }
 
   template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return ((lhs_ % v) * rhs_ - (rhs_ % v) * lhs_) / (rhs_*rhs_);
-  }
-};
-
-template<typename Lhs, typename Constant>
-class Divide<Lhs, Constant,
-    enable_if_t<IsExpression<Lhs>() && !IsExpression<Constant>()>>
-    : public Expression {
-
-  const Lhs lhs_;
-  const Constant rhs_;
-
- public:
-  constexpr Divide(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_(args...) / rhs_;
-  }
-
-  template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return (lhs_ % v) / rhs_;
-  }
-};
-
-template<typename Constant, typename Rhs>
-class Divide<Constant, Rhs,
-    enable_if_t<!IsExpression<Constant>() && IsExpression<Rhs>()>>
-    : public Expression {
-
-  const Constant lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Divide(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_ / rhs_(args...);
-  }
-
-  template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return -lhs_ * (rhs_ % v) / (rhs_ * rhs_);
+  friend constexpr auto gradient(Divide self, Variable<VarT, var_name> v) {
+    return (gradient(self.lhs_, v)*self.rhs_ - gradient(self.rhs_, v)*self.lhs_)
+           / (self.rhs_*self.rhs_);
   }
 };
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator/(Lhs lhs, Rhs rhs)
-    -> enable_if_t<
+    -> std::enable_if_t<
       (IsExpression<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
       || (IsExpression<Rhs>() && !IsZero<Lhs>()),
-    Divide<Lhs, Rhs, void>> {
+    Divide<Lhs, Rhs>> {
   return {lhs, rhs};
 }
 
 template<typename Lhs, typename T>
 constexpr auto operator/(Lhs lhs, PlusOne<T> rhs)
-    -> enable_if_t<!IsZero<Lhs>(), Lhs> {
+    -> std::enable_if_t<!IsZero<Lhs>(), Lhs> {
   return lhs;
 }
 
 template<typename Lhs, typename T>
 constexpr auto operator/(Lhs lhs, MinusOne<T> rhs)
-    -> enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
+    -> std::enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
   return -lhs;
 }
 

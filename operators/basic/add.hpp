@@ -2,20 +2,13 @@
 #define OPERATORS_ADD_HPP_
 
 #include "../../variable.hpp"
+#include "../binary_operator.hpp"
 
 namespace auto_derive {
 
-template<typename Lhs, typename Rhs, typename Enable = void>
-class Add;
-
 template<typename Lhs, typename Rhs>
-class Add<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
-    : public Expression {
-  const Lhs lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Add(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
+class Add : public BinaryOperator<Lhs, Rhs> {
+  USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
@@ -23,61 +16,17 @@ class Add<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
   }
 
   template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const {
-    return (lhs_ % v) + (rhs_ % v);
-  }
-};
-
-template<typename Lhs, typename Constant>
-class Add<Lhs, Constant,
-    enable_if_t<IsExpression<Lhs>() && !IsExpression<Constant>()>>
-    : public Expression {
-
-  const Lhs lhs_;
-  const Constant rhs_;
-
- public:
-  constexpr Add(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_(args...) + rhs_;
-  }
-
-  template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const {
-    return lhs_ % v;
-  }
-};
-
-template<typename Constant, typename Rhs>
-class Add<Constant, Rhs,
-    enable_if_t<!IsExpression<Constant>() && IsExpression<Rhs>()>>
-    : public Expression {
-
-  const Constant lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Add(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_ + rhs_(args...);
-  }
-
-  template<typename T, const char *str>
-  constexpr auto operator%(Variable<T, str> v) const {
-    return rhs_ % v;
+  friend constexpr auto gradient(Add self, Variable<T, str> v) {
+    return gradient(self.lhs_, v) + gradient(self.rhs_, v);
   }
 };
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator+(Lhs lhs, Rhs rhs)
-    -> enable_if_t<(
+    -> std::enable_if_t<(
       IsExpression<Lhs>() && !IsZero<Rhs>())
       || (IsExpression<Rhs>() && !IsZero<Lhs>()),
-    Add<Lhs, Rhs, void>> {
+    Add<Lhs, Rhs>> {
   return {lhs, rhs};
 }
 

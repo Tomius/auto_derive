@@ -2,21 +2,14 @@
 #define OPERATORS_MULTIPLY_HPP_
 
 #include "../../variable.hpp"
+#include "../binary_operator.hpp"
 #include "./add.hpp"
 
 namespace auto_derive {
 
-template<typename Lhs, typename Rhs, typename Enable = void>
-class Multiply;
-
 template<typename Lhs, typename Rhs>
-class Multiply<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
-    : public Expression {
-  const Lhs lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Multiply(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
+class Multiply : public BinaryOperator<Lhs, Rhs> {
+  USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
@@ -24,73 +17,29 @@ class Multiply<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>
   }
 
   template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return lhs_ * (rhs_ % v) + rhs_ * (lhs_ % v);
-  }
-};
-
-template<typename Lhs, typename Constant>
-class Multiply<Lhs, Constant,
-    enable_if_t<IsExpression<Lhs>() && !IsExpression<Constant>()>>
-    : public Expression {
-
-  const Lhs lhs_;
-  const Constant rhs_;
-
- public:
-  constexpr Multiply(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_(args...) * rhs_;
-  }
-
-  template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return (lhs_ % v) * rhs_;
-  }
-};
-
-template<typename Constant, typename Rhs>
-class Multiply<Constant, Rhs,
-    enable_if_t<!IsExpression<Constant>() && IsExpression<Rhs>()>>
-    : public Expression {
-
-  const Constant lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Multiply(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_ * rhs_(args...);
-  }
-
-  template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return lhs_ * (rhs_ % v);
+  friend constexpr auto gradient(Multiply self, Variable<VarT, var_name> v) {
+    return self.lhs_*gradient(self.rhs_, v) + self.rhs_*gradient(self.lhs_, v);
   }
 };
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator*(Lhs lhs, Rhs rhs)
-    -> enable_if_t<
+    -> std::enable_if_t<
         (IsExpression<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
         || (IsExpression<Rhs>() && !IsOne<Lhs>() && !IsZero<Lhs>()),
-    Multiply<Lhs, Rhs, void>> {
+    Multiply<Lhs, Rhs>> {
   return {lhs, rhs};
 }
 
 template<typename Lhs, typename T>
 constexpr auto operator*(Lhs lhs, PlusOne<T> rhs)
-    -> enable_if_t<!IsZero<Lhs>(), Lhs> {
+    -> std::enable_if_t<!IsZero<Lhs>(), Lhs> {
   return lhs;
 }
 
 template<typename T, typename Rhs>
 constexpr auto operator*(PlusOne<T> lhs, Rhs rhs)
-    -> enable_if_t<!IsZero<Rhs>(), Rhs> {
+    -> std::enable_if_t<!IsZero<Rhs>(), Rhs> {
   return rhs;
 }
 
@@ -101,13 +50,13 @@ constexpr PlusOne<decltype(T{1}*U{1})> operator*(PlusOne<T> lhs, PlusOne<U> rhs)
 
 template<typename Lhs, typename T>
 constexpr auto operator*(Lhs lhs, MinusOne<T> rhs)
-    -> enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
+    -> std::enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
   return -lhs;
 }
 
 template<typename T, typename Rhs>
 constexpr auto operator*(MinusOne<T> lhs, Rhs rhs)
-    -> enable_if_t<!IsZero<Rhs>(), decltype(-rhs)> {
+    -> std::enable_if_t<!IsZero<Rhs>(), decltype(-rhs)> {
   return -rhs;
 }
 

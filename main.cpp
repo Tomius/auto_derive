@@ -3,7 +3,6 @@
 #include <iostream>
 #include <type_traits>
 #include "operators/all.hpp"
-#include "./gradient.hpp"
 
 using real = double;
 

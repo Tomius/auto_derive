@@ -2,21 +2,14 @@
 #define OPERATORS_SUBTRACT_HPP_
 
 #include "../../variable.hpp"
+#include "../binary_operator.hpp"
 #include "./unary_minus.hpp"
 
 namespace auto_derive {
 
-template<typename Lhs, typename Rhs, typename Enable = void>
-class Subtract;
-
 template<typename Lhs, typename Rhs>
-class Subtract<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
-    : public Expression {
-  const Lhs lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Subtract(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
+class Subtract : public BinaryOperator<Lhs, Rhs> {
+  USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
@@ -24,61 +17,17 @@ class Subtract<Lhs, Rhs, enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>
   }
 
   template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return (lhs_ % v) - (rhs_ % v);
-  }
-};
-
-template<typename Lhs, typename Constant>
-class Subtract<Lhs, Constant,
-    enable_if_t<IsExpression<Lhs>() && !IsExpression<Constant>()>>
-    : public Expression {
-
-  const Lhs lhs_;
-  const Constant rhs_;
-
- public:
-  constexpr Subtract(Lhs lhs, Constant rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_(args...) - rhs_;
-  }
-
-  template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return lhs_ % v;
-  }
-};
-
-template<typename Constant, typename Rhs>
-class Subtract<Constant, Rhs,
-    enable_if_t<!IsExpression<Constant>() && IsExpression<Rhs>()>>
-    : public Expression {
-
-  const Constant lhs_;
-  const Rhs rhs_;
-
- public:
-  constexpr Subtract(Constant lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
-
-  template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_ - rhs_(args...);
-  }
-
-  template<typename VarT, const char *var_name>
-  constexpr auto operator%(Variable<VarT, var_name> v) const {
-    return -(rhs_ % v);
+  friend constexpr auto gradient(Subtract self, Variable<VarT, var_name> v) {
+    return gradient(self.lhs_, v) - gradient(self.rhs_, v);
   }
 };
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator-(Lhs lhs, Rhs rhs)
-    -> enable_if_t<
+    -> std::enable_if_t<
         (IsExpression<Lhs>() && !IsZero<Rhs>())
         || (IsExpression<Rhs>() && !IsZero<Lhs>()),
-    Subtract<Lhs, Rhs, void>> {
+    Subtract<Lhs, Rhs>> {
   return {lhs, rhs};
 }
 

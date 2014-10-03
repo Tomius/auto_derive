@@ -3,17 +3,13 @@
 
 #include <cmath>
 #include "../../variable.hpp"
+#include "../unary_operator.hpp"
 
 namespace auto_derive {
 
 template<typename Expr>
-class Sin : public Expression {
-  const Expr expr_;
-
- public:
-  constexpr Sin(Expr expr) : expr_(expr) {}
-
-  constexpr const Expr& expr() const { return expr_; }
+class Sin : public UnaryOperator<Expr> {
+  USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
   auto operator()(Args&&... args) const {
@@ -33,8 +29,8 @@ constexpr Sin<T> sin(T t) {
 namespace auto_derive {
 
 template <typename Expr, typename VarT, const char *var_name>
-constexpr auto operator%(Sin<Expr> sin, Variable<VarT, var_name> v) {
-  return cos(sin.expr()) * (sin.expr() % v);
+constexpr auto gradient(Sin<Expr> sin, Variable<VarT, var_name> v) {
+  return cos(sin.expr()) * gradient(sin.expr(), v);
 }
 
 }

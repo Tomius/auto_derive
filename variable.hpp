@@ -1,3 +1,5 @@
+#include "./constant.hpp"
+
 #ifndef VARIABLE_HPP_
 #define VARIABLE_HPP_
 
@@ -5,7 +7,6 @@
 #include <string>
 #include <type_traits>
 #include "./expression.hpp"
-#include "./constant.hpp"
 
 namespace auto_derive {
 
@@ -37,14 +38,14 @@ class Variable : public Expression {
   }
 
   template<typename U, const char *str>
-  constexpr auto operator%(Variable<U, str> v) const
-      -> enable_if_t<str==name_, PlusOne<U>> {
+  friend constexpr auto gradient(Variable self, Variable<U, str> v)
+      -> std::enable_if_t<str==name_, PlusOne<U>> {
     return PlusOne<U>{};
   }
 
   template<typename U, const char *str>
-  constexpr auto operator%(Variable<U, str> v) const
-      -> enable_if_t<str!=name_, Zero<U>> {
+  friend constexpr auto gradient(Variable self, Variable<U, str> v)
+      -> std::enable_if_t<str!=name_, Zero<U>> {
     return Zero<U>{};
   }
 };

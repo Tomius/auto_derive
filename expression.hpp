@@ -14,10 +14,6 @@ constexpr bool IsExpression() {
   return std::is_base_of<Expression, T>::value;
 }
 
-// Maybe I should find a better place for this...
-template<bool B, typename T = void>
-using enable_if_t = typename std::enable_if<B,T>::type;
-
 } // namespace auto_derive
 
 #endif
