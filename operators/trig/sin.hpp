@@ -1,5 +1,5 @@
-#ifndef OPERATORS_SIN_HPP_
-#define OPERATORS_SIN_HPP_
+#ifndef OPERATORS_TRIG_SIN_HPP_
+#define OPERATORS_TRIG_SIN_HPP_
 
 #include <cmath>
 #include "../../variable.hpp"
@@ -18,8 +18,13 @@ class Sin : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr Sin<T> sin(T t) {
+constexpr std::enable_if_t<!IsZero<T>(), Sin<T>> sin(T t) {
   return Sin<T>(t);
+}
+
+template <typename T>
+constexpr Zero<T> sin(Zero<T> t) {
+  return Zero<T>{};
 }
 
 }

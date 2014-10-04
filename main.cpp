@@ -12,7 +12,7 @@ namespace variable {
 }
 
 constexpr double equals(double a, double b) {
-  return a-b > 0 ? a-b < 1e-5 : b-a < 1e-5;
+  return a-b > 0 ? a-b < 1e-3 : b-a < 1e-3;
 }
 
 void test0() {
@@ -105,7 +105,27 @@ void test7() {
   assert(equals(0, dx(x=0)));
 }
 
+void test8() {
+  using variable::x;
+  using variable::y;
+  constexpr auto func = pow(x, 2.3);
+  constexpr auto dx = gradient(func, x);
+
+  assert(equals(5.66326, dx(x=2)));
+}
+
+void test9() {
+  using variable::x;
+  using variable::y;
+  constexpr auto func = pow(y+x, pow(x+2, 2.3));
+  constexpr auto dx = gradient(func, x);
+
+  assert(equals(1954.45, dx(x=1, y=0.5)));
+}
+
 int main() {
   test7();
+  test8();
+  test9();
   std::cout << "Test passed without any errors!" << std::endl;
 }

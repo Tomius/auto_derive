@@ -1,5 +1,5 @@
-#ifndef OPERATORS_COS_HPP_
-#define OPERATORS_COS_HPP_
+#ifndef OPERATORS_TRIG_COS_HPP_
+#define OPERATORS_TRIG_COS_HPP_
 
 #include <cmath>
 #include "../../variable.hpp"
@@ -18,8 +18,13 @@ class Cos : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr Cos<T> cos(T t) {
+constexpr std::enable_if_t<!IsZero<T>(), Cos<T>> cos(T t) {
   return Cos<T>(t);
+}
+
+template <typename T>
+constexpr PlusOne<T> cos(Zero<T> t) {
+  return PlusOne<T>{};
 }
 
 }

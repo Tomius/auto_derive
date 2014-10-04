@@ -45,6 +45,8 @@ struct Constant : public Expression {
 // Same goes for +-1 and Mult/Div. But of course, the real power comes from
 // 0 * x = 0. To recognize these, ones and zeros must have their own types.
 
+// +-1
+
 struct OneType { constexpr OneType() {} };
 
 template <typename T>
@@ -52,15 +54,35 @@ constexpr bool IsOne() {
   return std::is_base_of<OneType, T>::value;
 }
 
+// +1
+
+struct PlusOneType : OneType { constexpr PlusOneType() {} };
+
 template<typename T>
-struct PlusOne : Constant<T>, OneType {
+struct PlusOne : Constant<T>, PlusOneType {
   constexpr PlusOne() : Constant<T>{1} {}
 };
 
+template <typename T>
+constexpr bool IsPlusOne() {
+  return std::is_base_of<PlusOneType, T>::value;
+}
+
+// -1
+
+struct MinusOneType : OneType { constexpr MinusOneType() {} };
+
 template<typename T>
-struct MinusOne : Constant<T>, OneType {
+struct MinusOne : Constant<T>, MinusOneType {
   constexpr MinusOne() : Constant<T>{-1} {}
 };
+
+template <typename T>
+constexpr bool IsMinusOne() {
+  return std::is_base_of<MinusOneType, T>::value;
+}
+
+// 0
 
 struct ZeroType { constexpr ZeroType() {} };
 
@@ -72,18 +94,6 @@ constexpr bool IsZero() {
 template<typename T>
 struct Zero : Constant<T>, ZeroType {
   constexpr Zero() : Constant<T>{0} {}
-};
-
-struct NaNType { constexpr NaNType() {} };
-
-template <typename T>
-constexpr bool IsNaN() {
-  return std::is_base_of<NaNType, T>::value;
-}
-
-template<typename T>
-struct NaN : Constant<T>, NaNType {
-  constexpr NaN() : Constant<T>{NAN} {}
 };
 
 } // namespace auto_derive

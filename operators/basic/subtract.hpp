@@ -1,5 +1,5 @@
-#ifndef OPERATORS_SUBTRACT_HPP_
-#define OPERATORS_SUBTRACT_HPP_
+#ifndef OPERATORS_BASIC_SUBTRACT_HPP_
+#define OPERATORS_BASIC_SUBTRACT_HPP_
 
 #include "../../variable.hpp"
 #include "../binary_operator.hpp"

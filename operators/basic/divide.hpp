@@ -1,5 +1,5 @@
-#ifndef OPERATORS_DIVIDE_HPP_
-#define OPERATORS_DIVIDE_HPP_
+#ifndef OPERATORS_BASIC_DIVIDE_HPP_
+#define OPERATORS_BASIC_DIVIDE_HPP_
 
 #include "../../variable.hpp"
 #include "../binary_operator.hpp"
@@ -28,7 +28,7 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
 template<typename Lhs, typename Rhs>
 constexpr auto operator/(Lhs lhs, Rhs rhs)
     -> std::enable_if_t<
-      (IsFunction<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
+      (IsFunction<Lhs>() && !IsOne<Rhs>())
       || (IsFunction<Rhs>() && !IsZero<Lhs>()),
     Divide<Lhs, Rhs>> {
   return {lhs, rhs};
@@ -66,21 +66,6 @@ constexpr MinusOne<decltype(T{-1}/U{1})> operator/(MinusOne<T> lhs, PlusOne<U> r
   return MinusOne<decltype(T{-1}/U{1})>{};
 }
 
-template<typename Lhs, typename T>
-constexpr NaN<T> operator/(Lhs lhs, Zero<T> rhs) {
-  return NaN<T>{};
-}
-
-template<typename T, typename U>
-constexpr Zero<U> operator/(PlusOne<T> lhs, Zero<U> rhs) {
-  return NaN<T>{};
-}
-
-template<typename T, typename U>
-constexpr Zero<U> operator/(MinusOne<T> lhs, Zero<U> rhs) {
-  return NaN<T>{};
-}
-
 template<typename T, typename Rhs>
 constexpr Zero<T> operator/(Zero<T> lhs, Rhs rhs) {
   return lhs;
@@ -94,11 +79,6 @@ constexpr Zero<T> operator/(Zero<T> lhs, PlusOne<U> rhs) {
 template<typename T, typename U>
 constexpr Zero<T> operator/(Zero<T> lhs, MinusOne<U> rhs) {
   return lhs;
-}
-
-template<typename T, typename U>
-constexpr NaN<decltype(T{0}/U{0})> operator/(Zero<T> lhs, Zero<U> rhs) {
-  return NaN<decltype(T{0}/U{0})>{};
 }
 
 } // namespace auto_derive

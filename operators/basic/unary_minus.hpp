@@ -1,5 +1,5 @@
-#ifndef OPERATORS_UNARY_MINUS_HPP_
-#define OPERATORS_UNARY_MINUS_HPP_
+#ifndef OPERATORS_BASIC_UNARY_MINUS_HPP_
+#define OPERATORS_BASIC_UNARY_MINUS_HPP_
 
 #include "../../variable.hpp"
 #include "../unary_operator.hpp"
@@ -8,7 +8,7 @@ namespace auto_derive {
 
 template<typename Expr>
 class UnaryMinus : public UnaryOperator<Expr> {
-  USING_UNARY_OPERATOR(Expr); 
+  USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {

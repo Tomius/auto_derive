@@ -1,5 +1,5 @@
-#ifndef OPERATORS_MULTIPLY_HPP_
-#define OPERATORS_MULTIPLY_HPP_
+#ifndef OPERATORS_BASIC_MULTIPLY_HPP_
+#define OPERATORS_BASIC_MULTIPLY_HPP_
 
 #include "../../variable.hpp"
 #include "../binary_operator.hpp"
