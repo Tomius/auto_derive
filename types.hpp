@@ -2,6 +2,7 @@
 #define TYPES_HPP_
 
 #include <cmath>
+#include <iostream>
 #include <type_traits>
 
 namespace auto_derive {
@@ -36,6 +37,10 @@ struct Constant : public Expression {
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
     return value;
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, Constant const& self) {
+    return os << self.value;
   }
 };
 

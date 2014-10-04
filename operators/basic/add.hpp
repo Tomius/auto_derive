@@ -19,6 +19,10 @@ class Add : public BinaryOperator<Lhs, Rhs> {
   friend constexpr auto gradient(Add self, Variable<T, str> v) {
     return gradient(self.lhs_, v) + gradient(self.rhs_, v);
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Add const& self) {
+    return os << '(' << self.lhs_ << " + " << self.rhs_ << ')';
+  }
 };
 
 template<typename Lhs, typename Rhs>

@@ -16,8 +16,8 @@ class BinaryOperator<Lhs, Rhs,
 
   constexpr BinaryOperator(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  constexpr const Lhs& lhs() const { return lhs_; }
-  constexpr const Rhs& rhs() const { return rhs_; }
+  constexpr Lhs const& lhs() const { return lhs_; }
+  constexpr Rhs const& rhs() const { return rhs_; }
 
  protected:
   const Lhs lhs_;
@@ -32,8 +32,8 @@ class BinaryOperator<Lhs, Rhs,
 
   constexpr BinaryOperator(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  constexpr const Constant<Lhs>& lhs() const { return lhs_; }
-  constexpr const Rhs& rhs() const { return rhs_; }
+  constexpr Constant<Lhs> const& lhs() const { return lhs_; }
+  constexpr Rhs const& rhs() const { return rhs_; }
 
  protected:
   const Constant<Lhs> lhs_;
@@ -48,8 +48,8 @@ class BinaryOperator<Lhs, Rhs,
 
   constexpr BinaryOperator(Lhs lhs, Rhs rhs) : lhs_(lhs), rhs_(rhs) {}
 
-  constexpr const Lhs& lhs() const { return lhs_; }
-  constexpr const Constant<Rhs>& rhs() const { return rhs_; }
+  constexpr Lhs const& lhs() const { return lhs_; }
+  constexpr Constant<Rhs> const& rhs() const { return rhs_; }
 
  protected:
   const Lhs lhs_;

@@ -15,6 +15,10 @@ class Sin : public UnaryOperator<Expr> {
   auto operator()(Args&&... args) const {
     return std::sin(expr_(args...));
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Sin const& self) {
+    return os << "sin(" << self.expr_ << ")";
+  }
 };
 
 template <typename T>

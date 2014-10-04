@@ -21,6 +21,10 @@ class Log : public UnaryOperator<Expr> {
     // ln(x)' = 1/x * x' = x' / x
     return gradient(self.expr_, v) / self.expr_;
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Log const& self) {
+    return os << "log(" << self.expr_ << ')';
+  }
 };
 
 template<typename Expr>

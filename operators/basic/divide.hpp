@@ -23,6 +23,10 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
     return (gradient(self.lhs_, v)*self.rhs_ - gradient(self.rhs_, v)*self.lhs_)
            / (self.rhs_*self.rhs_);
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Divide const& self) {
+    return os << '(' << self.lhs_ << " / " << self.rhs_ << ')';
+  }
 };
 
 template<typename Lhs, typename Rhs>

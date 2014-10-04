@@ -20,6 +20,10 @@ class Subtract : public BinaryOperator<Lhs, Rhs> {
   friend constexpr auto gradient(Subtract self, Variable<VarT, var_name> v) {
     return gradient(self.lhs_, v) - gradient(self.rhs_, v);
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Subtract const& self) {
+    return os << '(' << self.lhs_ << " - " << self.rhs_ << ')';
+  }
 };
 
 template<typename Lhs, typename Rhs>

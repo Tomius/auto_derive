@@ -47,6 +47,10 @@ class Variable : public Function {
       -> std::enable_if_t<str!=name_, Zero<U>> {
     return Zero<U>{};
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Variable const& self) {
+    return os << self.name();
+  }
 };
 
 } // namespace auto_derive

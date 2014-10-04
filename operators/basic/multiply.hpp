@@ -20,6 +20,10 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
   friend constexpr auto gradient(Multiply self, Variable<VarT, var_name> v) {
     return self.lhs_*gradient(self.rhs_, v) + self.rhs_*gradient(self.lhs_, v);
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Multiply const& self) {
+    return os << '(' << self.lhs_ << " * " << self.rhs_ << ')';
+  }
 };
 
 template<typename Lhs, typename Rhs>

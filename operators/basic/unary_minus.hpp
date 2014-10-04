@@ -19,6 +19,10 @@ class UnaryMinus : public UnaryOperator<Expr> {
   friend constexpr auto gradient(UnaryMinus self, Variable<T, str> v) {
     return -gradient(self.expr_, v);
   }
+
+  friend std::ostream& operator<<(std::ostream& os, UnaryMinus const& self) {
+    return os << "-(" << self.expr_ << ')';
+  }
 };
 
 template<typename Expr>

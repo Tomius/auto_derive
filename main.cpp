@@ -99,10 +99,13 @@ void test6() {
 
 void test7() {
   using variable::x;
-  constexpr auto func = cos(sin(x + M_PI));
+  constexpr auto func = cos(sin(x));
   constexpr auto dx = gradient(func, x);
 
-  assert(equals(0, dx(x=0)));
+  std::cout << "d/dx(" << func << ") = " << dx << std::endl;
+
+  assert(equals(1, func(x=M_PI)));
+  assert(equals(0, dx(x=M_PI)));
 }
 
 void test8() {
@@ -110,6 +113,8 @@ void test8() {
   using variable::y;
   constexpr auto func = pow(x, 2.3);
   constexpr auto dx = gradient(func, x);
+
+  std::cout << "d/dx(" << func << ") = " << dx << std::endl;
 
   assert(equals(5.66326, dx(x=2)));
 }
@@ -119,6 +124,8 @@ void test9() {
   using variable::y;
   constexpr auto func = pow(y+x, pow(x+2, 2.3));
   constexpr auto dx = gradient(func, x);
+
+  std::cout << "d/dx(" << func << ") = " << dx << std::endl;
 
   assert(equals(1954.45, dx(x=1, y=0.5)));
 }

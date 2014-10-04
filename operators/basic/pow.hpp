@@ -23,8 +23,12 @@ class Pow : public BinaryOperator<Lhs, Rhs> {
   friend constexpr auto gradient(Pow self, Variable<T, str> v) {
     auto const& f = self.lhs_;
     auto const& g = self.rhs_;
-    
+
     return pow(f, g) * gradient(g, v) * log(f) + pow(f, g-1) * g * gradient(f, v);
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, Pow const& self) {
+    return os << "pow(" << self.lhs_ << ", " << self.rhs_ << ')';
   }
 };
 

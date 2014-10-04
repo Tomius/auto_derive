@@ -15,6 +15,10 @@ class Cos : public UnaryOperator<Expr> {
   auto operator()(Args&&... args) const {
     return std::cos(expr_(args...));
   }
+
+  friend std::ostream& operator<<(std::ostream& os, Cos const& self) {
+    return os << "cos(" << self.expr_ << ")";
+  }
 };
 
 template <typename T>
