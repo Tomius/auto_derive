@@ -134,5 +134,4 @@ int main() {
   test7();
   test8();
   test9();
-  std::cout << "Test passed without any errors!" << std::endl;
 }
