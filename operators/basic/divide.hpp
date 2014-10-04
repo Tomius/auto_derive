@@ -28,8 +28,8 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
 template<typename Lhs, typename Rhs>
 constexpr auto operator/(Lhs lhs, Rhs rhs)
     -> std::enable_if_t<
-      (IsExpression<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
-      || (IsExpression<Rhs>() && !IsZero<Lhs>()),
+      (IsFunction<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
+      || (IsFunction<Rhs>() && !IsZero<Lhs>()),
     Divide<Lhs, Rhs>> {
   return {lhs, rhs};
 }

@@ -25,8 +25,8 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
 template<typename Lhs, typename Rhs>
 constexpr auto operator*(Lhs lhs, Rhs rhs)
     -> std::enable_if_t<
-        (IsExpression<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
-        || (IsExpression<Rhs>() && !IsOne<Lhs>() && !IsZero<Lhs>()),
+        (IsFunction<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
+        || (IsFunction<Rhs>() && !IsOne<Lhs>() && !IsZero<Lhs>()),
     Multiply<Lhs, Rhs>> {
   return {lhs, rhs};
 }

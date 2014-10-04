@@ -1,34 +1,34 @@
-#ifndef CONSTANT_HPP_
-#define CONSTANT_HPP_
+#ifndef TYPES_HPP_
+#define TYPES_HPP_
 
 #include <cmath>
 #include <type_traits>
-#include "./expression.hpp"
-
-// Ones and zeros are very special in terms of functions, for example
-// x + 0 = x. Considering this, if we can recognize that one operand of
-// the addition is a zero, then we can optimize an Add node out.
-// Same goes for +-1 and Mult/Div. But of course, the real power comes from
-// 0 * x = 0. To recognize these, ones zeros must have their own types.
 
 namespace auto_derive {
 
-struct ConstantType {
-  constexpr ConstantType() {}
+// Everything that can be evaluated and derived is an expression
+struct Expression {
+  constexpr Expression() {}
 };
 
 template <typename T>
-constexpr bool IsConstant() {
-  return std::is_base_of<ConstantType, T>::value;
+constexpr bool IsExpression() {
+  return std::is_base_of<Expression, T>::value;
 }
+
+// Everything is a function, that depends on a variable
+struct Function : public Expression {
+  constexpr Function() {}
+};
 
 template <typename T>
-constexpr bool IsScalar() {
-  return !IsExpression<T>() && !IsConstant<T>();
+constexpr bool IsFunction() {
+  return std::is_base_of<Function, T>::value;
 }
 
+// A constant is a wrapper for a scalar.
 template<typename T>
-struct Constant : public ConstantType {
+struct Constant : public Expression {
   const T value;
   constexpr Constant(T value) : value(value) {}
   constexpr operator T() const { return value; }
@@ -38,6 +38,12 @@ struct Constant : public ConstantType {
     return value;
   }
 };
+
+// Ones and zeros are very special in terms of functions, for example
+// x + 0 = x. Considering this, if we can recognize that one operand of
+// the addition is a zero, then we can optimize an Add node out.
+// Same goes for +-1 and Mult/Div. But of course, the real power comes from
+// 0 * x = 0. To recognize these, ones and zeros must have their own types.
 
 struct OneType { constexpr OneType() {} };
 
@@ -85,10 +91,16 @@ struct NaN : Constant<T>, NaNType {
 #include "./variable.hpp"
 
 namespace auto_derive {
+
+  // The derivation of a Constant have to defined out-of-line,
+  // since this depends on the variable class, and the variable class depends
+  // on the constant type.
   template<typename T, typename VarT, const char* var_name>
   constexpr auto gradient(Constant<T> self, Variable<VarT, var_name> v) {
     return Zero<VarT>{};
   }
+
 }
+
 
 #endif

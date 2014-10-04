@@ -24,8 +24,8 @@ class Add : public BinaryOperator<Lhs, Rhs> {
 template<typename Lhs, typename Rhs>
 constexpr auto operator+(Lhs lhs, Rhs rhs)
     -> std::enable_if_t<(
-      IsExpression<Lhs>() && !IsZero<Rhs>())
-      || (IsExpression<Rhs>() && !IsZero<Lhs>()),
+      IsFunction<Lhs>() && !IsZero<Rhs>())
+      || (IsFunction<Rhs>() && !IsZero<Lhs>()),
     Add<Lhs, Rhs>> {
   return {lhs, rhs};
 }

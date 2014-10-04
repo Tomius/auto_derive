@@ -1,4 +1,4 @@
-#include "./constant.hpp"
+#include "./types.hpp"
 
 #ifndef VARIABLE_HPP_
 #define VARIABLE_HPP_
@@ -6,7 +6,6 @@
 #include <map>
 #include <string>
 #include <type_traits>
-#include "./expression.hpp"
 
 namespace auto_derive {
 
@@ -17,7 +16,7 @@ struct VariableValue {
 };
 
 template<typename T, const char *name_>
-class Variable : public Expression {
+class Variable : public Function {
  public:
   constexpr Variable() {}
 

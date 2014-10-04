@@ -25,8 +25,8 @@ class Subtract : public BinaryOperator<Lhs, Rhs> {
 template<typename Lhs, typename Rhs>
 constexpr auto operator-(Lhs lhs, Rhs rhs)
     -> std::enable_if_t<
-        (IsExpression<Lhs>() && !IsZero<Rhs>())
-        || (IsExpression<Rhs>() && !IsZero<Lhs>()),
+        (IsFunction<Lhs>() && !IsZero<Rhs>())
+        || (IsFunction<Rhs>() && !IsZero<Lhs>()),
     Subtract<Lhs, Rhs>> {
   return {lhs, rhs};
 }
