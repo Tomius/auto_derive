@@ -13,11 +13,11 @@ class Log : public UnaryOperator<Expr> {
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
-    return std::log(expr_(args...));
+    return std::log(expr_(std::forward<Args>(args)...));
   }
 
-  template<typename T, const char *str>
-  friend constexpr auto gradient(Log self, Variable<T, str> v) {
+  template<typename Variable>
+  friend constexpr auto gradient(Log const& self, Variable v) {
     // ln(x)' = 1/x * x' = x' / x
     return gradient(self.expr_, v) / self.expr_;
   }

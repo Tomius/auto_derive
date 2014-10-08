@@ -13,7 +13,7 @@ class Cos : public UnaryOperator<Expr> {
 
   template<typename... Args>
   auto operator()(Args&&... args) const {
-    return std::cos(expr_(args...));
+    return std::cos(expr_(std::forward<Args>(args)...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Cos const& self) {
@@ -38,8 +38,8 @@ constexpr PlusOne<T> cos(Zero<T> t) {
 
 namespace auto_derive {
 
-template <typename Expr, typename VarT, const char *var_name>
-constexpr auto gradient(Cos<Expr> cos, Variable<VarT, var_name> v) {
+template <typename Expr, typename Variable>
+constexpr auto gradient(Cos<Expr> const& cos, Variable v) {
   return -sin(cos.expr()) * gradient(cos.expr(), v);
 }
 

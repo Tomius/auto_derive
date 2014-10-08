@@ -12,11 +12,11 @@ class UnaryMinus : public UnaryOperator<Expr> {
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
-    return -expr_(args...);
+    return -expr_(std::forward<Args>(args)...);
   }
 
-  template<typename T, const char *str>
-  friend constexpr auto gradient(UnaryMinus self, Variable<T, str> v) {
+  template<typename Variable>
+  friend constexpr auto gradient(UnaryMinus const& self, Variable v) {
     return -gradient(self.expr_, v);
   }
 

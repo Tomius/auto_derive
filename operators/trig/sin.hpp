@@ -13,7 +13,7 @@ class Sin : public UnaryOperator<Expr> {
 
   template<typename... Args>
   auto operator()(Args&&... args) const {
-    return std::sin(expr_(args...));
+    return std::sin(expr_(std::forward<Args>(args)...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Sin const& self) {
@@ -37,8 +37,8 @@ constexpr Zero<T> sin(Zero<T> t) {
 
 namespace auto_derive {
 
-template <typename Expr, typename VarT, const char *var_name>
-constexpr auto gradient(Sin<Expr> sin, Variable<VarT, var_name> v) {
+template <typename Expr, typename Variable>
+constexpr auto gradient(Sin<Expr> const& sin, Variable v) {
   return cos(sin.expr()) * gradient(sin.expr(), v);
 }
 

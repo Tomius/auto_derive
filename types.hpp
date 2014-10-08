@@ -39,7 +39,7 @@ struct Constant : public Expression {
     return value;
   }
 
-  friend std::ostream& operator<<(std::ostream& os, Constant const& self) {
+  friend std::ostream& operator<<(std::ostream& os, Constant self) {
     return os << self.value;
   }
 };
@@ -107,13 +107,13 @@ struct Zero : Constant<T>, ZeroType {
 
 namespace auto_derive {
 
-  // The derivation of a Constant have to defined out-of-line,
-  // since this depends on the variable class, and the variable class depends
-  // on the constant type.
-  template<typename T, typename VarT, const char* var_name>
-  constexpr auto gradient(Constant<T> self, Variable<VarT, var_name> v) {
-    return Zero<VarT>{};
-  }
+// The derivation of a Constant have to defined out-of-line,
+// since this depends on the variable class, and the variable class depends
+// on the constant type.
+template<typename T, typename Variable>
+constexpr auto gradient(Constant<T> self, Variable v) {
+  return Zero<T>{};
+}
 
 }
 

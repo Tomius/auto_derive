@@ -14,13 +14,14 @@ class Pow : public BinaryOperator<Lhs, Rhs> {
 
   template<typename... Args>
   auto operator()(Args&&... args) const {
-    return std::pow(lhs_(args...), rhs_(args...));
+    return std::pow(lhs_(std::forward<Args>(args)...),
+                    rhs_(std::forward<Args>(args)...));
   }
 
   // (f^g)' = f^g * g' * ln(f) + f^(g-1) * g * f'
   // See http://mathforum.org/library/drmath/view/53679.html - equation [10]
-  template<typename T, const char *str>
-  friend constexpr auto gradient(Pow self, Variable<T, str> v) {
+  template<typename Variable>
+  friend constexpr auto gradient(Pow const& self, Variable v) {
     auto const& f = self.lhs_;
     auto const& g = self.rhs_;
 

@@ -13,11 +13,11 @@ class Subtract : public BinaryOperator<Lhs, Rhs> {
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
-    return lhs_(args...) - rhs_(args...);
+    return lhs_(std::forward<Args>(args)...) - rhs_(std::forward<Args>(args)...);
   }
 
-  template<typename VarT, const char *var_name>
-  friend constexpr auto gradient(Subtract self, Variable<VarT, var_name> v) {
+  template<typename Variable>
+  friend constexpr auto gradient(Subtract const& self, Variable v) {
     return gradient(self.lhs_, v) - gradient(self.rhs_, v);
   }
 

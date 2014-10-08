@@ -12,11 +12,11 @@ class Add : public BinaryOperator<Lhs, Rhs> {
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
-    return lhs_(args...) + rhs_(args...);
+    return lhs_(std::forward<Args>(args)...) + rhs_(std::forward<Args>(args)...);
   }
 
-  template<typename T, const char *str>
-  friend constexpr auto gradient(Add self, Variable<T, str> v) {
+  template<typename Variable>
+  friend constexpr auto gradient(Add const& self, Variable v) {
     return gradient(self.lhs_, v) + gradient(self.rhs_, v);
   }
 

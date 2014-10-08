@@ -13,11 +13,11 @@ class Abs : public UnaryOperator<Expr> {
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
-    return std::fabs(expr_(args...));
+    return std::fabs(expr_(std::forward<Args>(args)...));
   }
 
-  template<typename T, const char *str>
-  friend constexpr auto gradient(Abs self, Variable<T, str> v) {
+  template<typename Variable>
+  friend constexpr auto gradient(Abs self, Variable v) {
     // abs(f(x))' = sgn(f(x)) * f(x)' = f(x) / |f(x)| * f(x)'
     return (self.expr_ / self) * gradient(self.expr_, v);
   }

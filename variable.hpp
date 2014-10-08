@@ -24,7 +24,7 @@ class Variable : public Function {
 
   template<typename U, typename... Args>
   constexpr T operator()(U val, Args&&... args) const {
-    return operator()(args...);
+    return operator()(std::forward<Args>(args)...);
   }
 
   template<typename... Args>
