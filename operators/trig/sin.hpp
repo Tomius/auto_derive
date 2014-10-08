@@ -16,6 +16,8 @@ class Sin : public UnaryOperator<Expr> {
     return std::sin(expr_(std::forward<Args>(args)...));
   }
 
+  static int precendence() { return 1; }
+
   friend std::ostream& operator<<(std::ostream& os, Sin const& self) {
     return os << "sin(" << self.expr_ << ")";
   }

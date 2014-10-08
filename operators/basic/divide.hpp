@@ -24,8 +24,11 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
            / (self.rhs_*self.rhs_);
   }
 
+  static int precendence() { return 3; }
+
   friend std::ostream& operator<<(std::ostream& os, Divide const& self) {
-    return os << '(' << self.lhs_ << " / " << self.rhs_ << ')';
+    os << put_parenthesis(precendence()) << self.lhs_ << " / " << self.rhs_;
+    return os;
   }
 };
 

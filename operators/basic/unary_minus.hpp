@@ -20,8 +20,11 @@ class UnaryMinus : public UnaryOperator<Expr> {
     return -gradient(self.expr_, v);
   }
 
+  static int precendence() { return 2; }
+
   friend std::ostream& operator<<(std::ostream& os, UnaryMinus const& self) {
-    return os << "-(" << self.expr_ << ')';
+    os << put_parenthesis(precendence()) << "-" << self.expr_;
+    return os;
   }
 };
 

@@ -22,6 +22,8 @@ class Abs : public UnaryOperator<Expr> {
     return (self.expr_ / self) * gradient(self.expr_, v);
   }
 
+  static int precendence() { return 1; }
+
   friend std::ostream& operator<<(std::ostream& os, Abs const& self) {
     return os << "|" << self.expr_ << "|";
   }

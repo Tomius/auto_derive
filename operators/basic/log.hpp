@@ -22,6 +22,8 @@ class Log : public UnaryOperator<Expr> {
     return gradient(self.expr_, v) / self.expr_;
   }
 
+  static int precendence() { return 1; }
+
   friend std::ostream& operator<<(std::ostream& os, Log const& self) {
     return os << "log(" << self.expr_ << ')';
   }

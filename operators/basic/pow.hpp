@@ -28,6 +28,8 @@ class Pow : public BinaryOperator<Lhs, Rhs> {
     return pow(f, g) * gradient(g, v) * log(f) + pow(f, g-1) * g * gradient(f, v);
   }
 
+  static int precendence() { return 1; }
+
   friend std::ostream& operator<<(std::ostream& os, Pow const& self) {
     return os << "pow(" << self.lhs_ << ", " << self.rhs_ << ')';
   }

@@ -16,6 +16,8 @@ class Cos : public UnaryOperator<Expr> {
     return std::cos(expr_(std::forward<Args>(args)...));
   }
 
+  static int precendence() { return 1; }
+
   friend std::ostream& operator<<(std::ostream& os, Cos const& self) {
     return os << "cos(" << self.expr_ << ")";
   }
