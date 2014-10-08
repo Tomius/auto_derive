@@ -12,7 +12,7 @@ template<typename Expr>
 class UnaryOperator<Expr, std::enable_if_t<!IsExpression<Expr>()>>
     : public Function  {
  public:
-  constexpr UnaryOperator(Expr expr) : expr_(expr) {}
+  constexpr UnaryOperator(const Expr expr) : expr_(expr) {}
 
   constexpr const Constant<Expr>& expr() const { return expr_; }
 
@@ -31,6 +31,7 @@ class UnaryOperator<Expr, std::enable_if_t<IsExpression<Expr>()>>
 protected:
   const Expr expr_;
 };
+
 
 #define USING_UNARY_OPERATOR(Expr)                   \
 private:                                             \

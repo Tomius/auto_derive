@@ -6,18 +6,20 @@
 
 using real = double;
 
-namespace variable {
-  DECLARE_VARIABLE(real, x);
-  DECLARE_VARIABLE(real, y);
-}
+DECLARE_VARIABLE(real, x);
+DECLARE_VARIABLE(real, y);
 
 constexpr double equals(double a, double b) {
   return a-b > 0 ? a-b < 1e-3 : b-a < 1e-3;
 }
 
-void test0() {
-  using variable::x;
-  using variable::y;
+void testVariables() {
+  DECLARE_VARIABLE(real, x);
+  static_assert(!std::is_same<decltype(x), decltype(::y)>::value, "error");
+  static_assert(std::is_same<decltype(x), decltype(::x)>::value, "error");
+}
+
+void testAddSub() {
   constexpr auto func = 2+(x-x)+7-x+y+4+x;
 
   static_assert(15 == func(x=5, y=2), "error");
@@ -29,9 +31,7 @@ void test0() {
   static_assert(dy==1, "error");
 }
 
-void test1() {
-  using variable::x;
-  using variable::y;
+void testAddSubMult() {
   constexpr auto func = (2+(x-x)+7-x+y+4+x)*(37-x*y+2+x);
   constexpr auto dx = gradient(func, x);
   constexpr auto dy = gradient(func, y);
@@ -41,8 +41,7 @@ void test1() {
   static_assert(-41 == dy(x=5, y=2), "error");
 }
 
-void test2() {
-  using variable::x;
+void testMult() {
   constexpr auto func = x*x*x;
   constexpr auto dx = gradient(func, x);
   constexpr auto dx2 = gradient(dx, x);
@@ -55,8 +54,6 @@ void test2() {
 }
 
 void test3() {
-  using variable::x;
-  using variable::y;
   constexpr auto func = x + gradient(y, x);
   constexpr auto func2 = gradient(y, x) + x;
 
@@ -65,8 +62,6 @@ void test3() {
 }
 
 void test4() {
-  using variable::x;
-  using variable::y;
   constexpr auto func = (13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x);
   constexpr auto dx = gradient(func, x);
   constexpr auto dy = gradient(func, y);
@@ -77,8 +72,6 @@ void test4() {
 }
 
 void test5() {
-  using variable::x;
-  using variable::y;
   constexpr auto func = (13/(x+x)/7-x+y*4/x)*(37-x*y/x+2+y/x);
   constexpr auto dx = gradient(func, x);
   constexpr auto dy = gradient(func, y);
@@ -89,8 +82,6 @@ void test5() {
 }
 
 void test6() {
-  using variable::x;
-  using variable::y;
   constexpr auto dx3 = gradient(gradient(gradient(
       ((13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x)), x), x), x);
 
@@ -98,7 +89,6 @@ void test6() {
 }
 
 void test7() {
-  using variable::x;
   constexpr auto func = cos(sin(x));
   constexpr auto dx = gradient(func, x);
 
@@ -109,8 +99,6 @@ void test7() {
 }
 
 void test8() {
-  using variable::x;
-  using variable::y;
   constexpr auto func = pow(x, 2.3);
   constexpr auto dx = gradient(func, x);
 
@@ -120,8 +108,6 @@ void test8() {
 }
 
 void test9() {
-  using variable::x;
-  using variable::y;
   constexpr auto func = pow(y+x, pow(x+2, 2.3));
   constexpr auto dx = gradient(func, x);
 

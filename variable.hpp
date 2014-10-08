@@ -9,18 +9,16 @@
 
 namespace auto_derive {
 
-template<typename T, const char *name_>
+template<typename T, typename Name>
 struct VariableValue {
   T value;
   constexpr VariableValue(T value) : value(value) {}
 };
 
-template<typename T, const char *name_>
+template<typename T, typename Name>
 class Variable : public Function {
  public:
-  constexpr Variable() {}
-
-  constexpr const char * name() const { return name_; }
+  constexpr Variable(const char* name) : name_(name) {}
 
   template<typename U, typename... Args>
   constexpr T operator()(U val, Args&&... args) const {
@@ -28,36 +26,34 @@ class Variable : public Function {
   }
 
   template<typename... Args>
-  constexpr T operator()(VariableValue<T, name_> val, Args&&... args) const {
+  constexpr T operator()(VariableValue<T, Name> val, Args&&... args) const {
     return val.value;
   }
 
   constexpr auto operator=(T value) const {
-    return VariableValue<T, name_>(value);
+    return VariableValue<T, Name>(value);
   }
 
-  template<typename U, const char *str>
-  friend constexpr auto gradient(Variable self, Variable<U, str> v)
-      -> std::enable_if_t<str==name_, PlusOne<U>> {
-    return PlusOne<U>{};
+  friend constexpr auto gradient(Variable self, Variable v) {
+    return PlusOne<T>{};
   }
 
-  template<typename U, const char *str>
-  friend constexpr auto gradient(Variable self, Variable<U, str> v)
-      -> std::enable_if_t<str!=name_, Zero<U>> {
+  template<typename U, typename Name2>
+  friend constexpr auto gradient(Variable self, Variable<U, Name2> v) {
     return Zero<U>{};
   }
 
-  friend std::ostream& operator<<(std::ostream& os, Variable const& self) {
-    return os << self.name();
+  friend std::ostream& operator<<(std::ostream& os, Variable self) {
+    return os << self.name_;
   }
+
+ private:
+  const char* name_;
 };
 
 } // namespace auto_derive
 
-// Variables must be defined outside of functions...
 #define DECLARE_VARIABLE(T, X) \
-  constexpr char _STRING_OF_VARIABLE_##X[] = #X; \
-  constexpr auto_derive::Variable<T, _STRING_OF_VARIABLE_##X> X;
+  constexpr auto_derive::Variable<T, struct X> X{#X};
 
 #endif
