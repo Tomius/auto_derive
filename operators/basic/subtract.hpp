@@ -24,7 +24,8 @@ class Subtract : public BinaryOperator<Lhs, Rhs> {
   static int precendence() { return 4; }
 
   friend std::ostream& operator<<(std::ostream& os, Subtract const& self) {
-    os << put_parenthesis(precendence()) << self.lhs_ << " - " << self.rhs_;
+    os << put_parenthesis(precendence()) << self.lhs_ << "-";
+    os << put_parenthesis(precendence() - 1) << self.rhs_;
     return os;
   }
 };

@@ -24,7 +24,7 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
   static int precendence() { return 3; }
 
   friend std::ostream& operator<<(std::ostream& os, Multiply const& self) {
-    os << put_parenthesis(precendence()) << self.lhs_ << " * " << self.rhs_;
+    os << put_parenthesis(precendence()) << self.lhs_ << "*" << self.rhs_;
     return os;
   }
 };

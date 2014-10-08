@@ -8,13 +8,11 @@ namespace auto_derive {
 
 struct put_parenthesis {
   int precendence;
-  explicit put_parenthesis(int precendence)
-      : precendence(precendence) {}
+  explicit put_parenthesis(int precendence) : precendence(precendence) {}
 };
 
 class PutParenthesisPrinter {
-private:
-
+ private:
   template <typename T>
   class HasPrecedence {
     private:
@@ -28,24 +26,27 @@ private:
   std::ostream& os;
   put_parenthesis op;
 
-public:
+ public:
   PutParenthesisPrinter(std::ostream& os, put_parenthesis op)
-      : os(os), op(op) { }
+      : os(os), op(op) {}
 
   template<typename T>
-  std::enable_if_t<HasPrecedence<T>::value, std::ostream&>
+  std::enable_if_t<HasPrecedence<T>::value, PutParenthesisPrinter const&>
   operator<<(const T& t) const {
     if (t.precendence() > op.precendence) {
-      return os << '(' << t << ')';
+      os << '(' << t << ')';
     } else {
-      return os << t;
+      os << t;
     }
+
+    return *this;
   }
 
   template<typename T>
-  std::enable_if_t<!HasPrecedence<T>::value, std::ostream&>
+  std::enable_if_t<!HasPrecedence<T>::value, PutParenthesisPrinter const&>
   operator<<(const T& t) const {
-    return os << t;
+    os << t;
+    return *this;
   }
 
 };
