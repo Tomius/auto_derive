@@ -21,16 +21,21 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
     return self.lhs_*gradient(self.rhs_, v) + self.rhs_*gradient(self.lhs_, v);
   }
 
-  static int precendence() { return 3; }
+  enum { precendence = 3 };
 
   friend std::ostream& operator<<(std::ostream& os, Multiply const& self) {
-    os << put_parenthesis(precendence()) << self.lhs_ << "*" << self.rhs_;
+    if (!IsFunction<Rhs>()) {
+      // f(x)*c should be printed as c*f(x) by convention
+      os << put_parenthesis(precendence) << self.rhs_ << "*" << self.lhs_;
+    } else {
+      os << put_parenthesis(precendence) << self.lhs_ << "*" << self.rhs_;
+    }
     return os;
   }
 };
 
 template<typename Lhs, typename Rhs>
-constexpr auto operator*(Lhs lhs, Rhs rhs)
+constexpr auto operator*(Lhs const& lhs, Rhs const& rhs)
     -> std::enable_if_t<
         (IsFunction<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
         || (IsFunction<Rhs>() && !IsOne<Lhs>() && !IsZero<Lhs>()),
@@ -39,13 +44,13 @@ constexpr auto operator*(Lhs lhs, Rhs rhs)
 }
 
 template<typename Lhs, typename T>
-constexpr auto operator*(Lhs lhs, PlusOne<T> rhs)
+constexpr auto operator*(Lhs const& lhs, PlusOne<T> rhs)
     -> std::enable_if_t<!IsZero<Lhs>(), Lhs> {
   return lhs;
 }
 
 template<typename T, typename Rhs>
-constexpr auto operator*(PlusOne<T> lhs, Rhs rhs)
+constexpr auto operator*(PlusOne<T> lhs, Rhs const& rhs)
     -> std::enable_if_t<!IsZero<Rhs>(), Rhs> {
   return rhs;
 }
@@ -56,13 +61,13 @@ constexpr PlusOne<decltype(T{1}*U{1})> operator*(PlusOne<T> lhs, PlusOne<U> rhs)
 }
 
 template<typename Lhs, typename T>
-constexpr auto operator*(Lhs lhs, MinusOne<T> rhs)
+constexpr auto operator*(Lhs const& lhs, MinusOne<T> rhs)
     -> std::enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
   return -lhs;
 }
 
 template<typename T, typename Rhs>
-constexpr auto operator*(MinusOne<T> lhs, Rhs rhs)
+constexpr auto operator*(MinusOne<T> lhs, Rhs const& rhs)
     -> std::enable_if_t<!IsZero<Rhs>(), decltype(-rhs)> {
   return -rhs;
 }
@@ -83,7 +88,7 @@ constexpr MinusOne<decltype(T{-1}*U{1})> operator*(MinusOne<T> lhs, PlusOne<U> r
 }
 
 template<typename Lhs, typename T>
-constexpr Zero<T> operator*(Lhs lhs, Zero<T> rhs) {
+constexpr Zero<T> operator*(Lhs const& lhs, Zero<T> rhs) {
   return rhs;
 }
 
@@ -98,7 +103,7 @@ constexpr Zero<U> operator*(MinusOne<T> lhs, Zero<U> rhs) {
 }
 
 template<typename T, typename Rhs>
-constexpr Zero<T> operator*(Zero<T> lhs, Rhs rhs) {
+constexpr Zero<T> operator*(Zero<T> lhs, Rhs const& rhs) {
   return lhs;
 }
 

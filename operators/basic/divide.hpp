@@ -24,17 +24,17 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
            / (self.rhs_*self.rhs_);
   }
 
-  static int precendence() { return 3; }
+  enum { precendence = 3 };
 
   friend std::ostream& operator<<(std::ostream& os, Divide const& self) {
-    os << put_parenthesis(precendence()) << self.lhs_ << "/";
-    os << put_parenthesis(precendence() - 1) << self.rhs_;
+    os << put_parenthesis(precendence) << self.lhs_ << "/";
+    os << put_parenthesis(precendence - 1) << self.rhs_;
     return os;
   }
 };
 
 template<typename Lhs, typename Rhs>
-constexpr auto operator/(Lhs lhs, Rhs rhs)
+constexpr auto operator/(Lhs const& lhs, Rhs const& rhs)
     -> std::enable_if_t<
       (IsFunction<Lhs>() && !IsOne<Rhs>())
       || (IsFunction<Rhs>() && !IsZero<Lhs>()),
@@ -43,13 +43,13 @@ constexpr auto operator/(Lhs lhs, Rhs rhs)
 }
 
 template<typename Lhs, typename T>
-constexpr auto operator/(Lhs lhs, PlusOne<T> rhs)
+constexpr auto operator/(Lhs const& lhs, PlusOne<T> rhs)
     -> std::enable_if_t<!IsZero<Lhs>(), Lhs> {
   return lhs;
 }
 
 template<typename Lhs, typename T>
-constexpr auto operator/(Lhs lhs, MinusOne<T> rhs)
+constexpr auto operator/(Lhs const& lhs, MinusOne<T> rhs)
     -> std::enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
   return -lhs;
 }
@@ -75,7 +75,7 @@ constexpr MinusOne<decltype(T{-1}/U{1})> operator/(MinusOne<T> lhs, PlusOne<U> r
 }
 
 template<typename T, typename Rhs>
-constexpr Zero<T> operator/(Zero<T> lhs, Rhs rhs) {
+constexpr Zero<T> operator/(Zero<T> lhs, Rhs const& rhs) {
   return lhs;
 }
 

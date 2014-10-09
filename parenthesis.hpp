@@ -13,30 +13,24 @@ struct put_parenthesis {
 
 class PutParenthesisPrinter {
  private:
-  template <typename T>
-  class HasPrecedence {
-    private:
-      template <typename C> static char test( decltype(&C::precendence) ) ;
-      template <typename C> static long long test(...);
+  template<typename T, typename = void>
+  struct HasPrecedence : std::false_type { };
 
-    public:
-      enum { value = sizeof(test<T>(0)) == sizeof(char) };
-  };
-
-  std::ostream& os;
-  put_parenthesis op;
+  template<typename T>
+  struct HasPrecedence<T, decltype(std::declval<T>().precendence, void())>
+      : std::true_type { };
 
  public:
-  PutParenthesisPrinter(std::ostream& os, put_parenthesis op)
-      : os(os), op(op) {}
+  PutParenthesisPrinter(std::ostream& os, put_parenthesis context)
+      : os_(os), context_(context) {}
 
   template<typename T>
   std::enable_if_t<HasPrecedence<T>::value, PutParenthesisPrinter const&>
   operator<<(const T& t) const {
-    if (t.precendence() > op.precendence) {
-      os << '(' << t << ')';
+    if (t.precendence > context_.precendence) {
+      os_ << '(' << t << ')';
     } else {
-      os << t;
+      os_ << t;
     }
 
     return *this;
@@ -45,14 +39,17 @@ class PutParenthesisPrinter {
   template<typename T>
   std::enable_if_t<!HasPrecedence<T>::value, PutParenthesisPrinter const&>
   operator<<(const T& t) const {
-    os << t;
+    os_ << t;
     return *this;
   }
 
+ private:
+  std::ostream& os_;
+  put_parenthesis context_;
 };
 
-PutParenthesisPrinter operator<<(std::ostream& os, put_parenthesis op) {
-  return PutParenthesisPrinter(os, op);
+PutParenthesisPrinter operator<<(std::ostream& os, put_parenthesis context) {
+  return PutParenthesisPrinter(os, context);
 }
 
 }

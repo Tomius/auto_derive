@@ -1,5 +1,5 @@
-#ifndef OPERATORS_BASIC_FABS_HPP_
-#define OPERATORS_BASIC_FABS_HPP_
+#ifndef OPERATORS_BASIC_ABS_HPP_
+#define OPERATORS_BASIC_ABS_HPP_
 
 #include "../../variable.hpp"
 #include "../unary_operator.hpp"
@@ -13,7 +13,7 @@ class Abs : public UnaryOperator<Expr> {
 
   template<typename... Args>
   constexpr auto operator()(Args&&... args) const {
-    return std::fabs(expr_(std::forward<Args>(args)...));
+    return std::abs(expr_(std::forward<Args>(args)...));
   }
 
   template<typename Variable>
@@ -22,36 +22,39 @@ class Abs : public UnaryOperator<Expr> {
     return (self.expr_ / self) * gradient(self.expr_, v);
   }
 
-  static int precendence() { return 1; }
-
   friend std::ostream& operator<<(std::ostream& os, Abs const& self) {
-    return os << "|" << self.expr_ << "|";
+    return os << "abs(" << self.expr_ << ')';
   }
 };
 
 template<typename Expr>
-constexpr std::enable_if_t<IsFunction<Expr>(), Abs<Expr>> fabs(Expr expr) {
+constexpr std::enable_if_t<IsFunction<Expr>(), Abs<Expr>> abs(Expr const& expr) {
   return {expr};
 }
 
 template<typename T>
-constexpr PlusOne<T> fabs(PlusOne<T> expr) {
+constexpr PlusOne<T> abs(PlusOne<T> expr) {
   return expr;
 }
 
 template<typename T>
-constexpr Zero<T> fabs(Zero<T> expr) {
+constexpr Zero<T> abs(Zero<T> expr) {
   return expr;
 }
 
 template<typename T>
-constexpr PlusOne<T> fabs(MinusOne<T> expr) {
+constexpr PlusOne<T> abs(MinusOne<T> expr) {
   return PlusOne<T>{};
 }
 
 template<typename T>
-constexpr Constant<T> fabs(Constant<T> expr) {
+constexpr Constant<T> abs(Constant<T> expr) {
   return expr.value > 0 ? expr : Constant<T>{-expr.value};
+}
+
+template<typename Expr>
+constexpr auto fabs(Expr const& expr) {
+  return abs(expr);
 }
 
 } // namespace auto_derive

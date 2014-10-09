@@ -21,17 +21,17 @@ class Subtract : public BinaryOperator<Lhs, Rhs> {
     return gradient(self.lhs_, v) - gradient(self.rhs_, v);
   }
 
-  static int precendence() { return 4; }
+  enum { precendence = 4 };
 
   friend std::ostream& operator<<(std::ostream& os, Subtract const& self) {
-    os << put_parenthesis(precendence()) << self.lhs_ << "-";
-    os << put_parenthesis(precendence() - 1) << self.rhs_;
+    os << put_parenthesis(precendence) << self.lhs_ << "-";
+    os << put_parenthesis(precendence - 1) << self.rhs_;
     return os;
   }
 };
 
 template<typename Lhs, typename Rhs>
-constexpr auto operator-(Lhs lhs, Rhs rhs)
+constexpr auto operator-(Lhs const& lhs, Rhs const& rhs)
     -> std::enable_if_t<
         (IsFunction<Lhs>() && !IsZero<Rhs>())
         || (IsFunction<Rhs>() && !IsZero<Lhs>()),
@@ -40,12 +40,12 @@ constexpr auto operator-(Lhs lhs, Rhs rhs)
 }
 
 template<typename Lhs, typename T>
-constexpr Lhs operator-(Lhs lhs, Zero<T> rhs) {
+constexpr Lhs operator-(Lhs const& lhs, Zero<T> rhs) {
   return lhs;
 }
 
 template<typename T, typename Rhs>
-constexpr auto operator-(Zero<T> lhs, Rhs rhs) -> decltype(-rhs) {
+constexpr auto operator-(Zero<T> lhs, Rhs const& rhs) -> decltype(-rhs) {
   return -rhs;
 }
 

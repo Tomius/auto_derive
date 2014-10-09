@@ -20,16 +20,16 @@ class UnaryMinus : public UnaryOperator<Expr> {
     return -gradient(self.expr_, v);
   }
 
-  static int precendence() { return 2; }
+  enum { precendence = 2 };
 
   friend std::ostream& operator<<(std::ostream& os, UnaryMinus const& self) {
-    os << put_parenthesis(precendence()) << "-" << self.expr_;
+    os << put_parenthesis(precendence) << "-" << self.expr_;
     return os;
   }
 };
 
 template<typename Expr>
-constexpr auto operator-(Expr expr)
+constexpr auto operator-(Expr const& expr)
     -> std::enable_if_t<IsFunction<Expr>(), UnaryMinus<Expr>> {
   return {expr};
 }
