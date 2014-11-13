@@ -17,9 +17,9 @@ class Log : public UnaryOperator<Expr> {
   }
 
   template<typename Variable>
-  friend constexpr auto gradient(Log const& self, Variable v) {
+  friend constexpr auto derive(Log const& self, Variable v) {
     // ln(x)' = 1/x * x' = x' / x
-    return gradient(self.expr_, v) / self.expr_;
+    return derive(self.expr_, v) / self.expr_;
   }
 
   friend std::ostream& operator<<(std::ostream& os, Log const& self) {

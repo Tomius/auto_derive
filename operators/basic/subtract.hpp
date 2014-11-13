@@ -17,8 +17,8 @@ class Subtract : public BinaryOperator<Lhs, Rhs> {
   }
 
   template<typename Variable>
-  friend constexpr auto gradient(Subtract const& self, Variable v) {
-    return gradient(self.lhs_, v) - gradient(self.rhs_, v);
+  friend constexpr auto derive(Subtract const& self, Variable v) {
+    return derive(self.lhs_, v) - derive(self.rhs_, v);
   }
 
   enum { precendence = 4 };

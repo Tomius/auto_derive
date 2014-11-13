@@ -19,8 +19,8 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
   }
 
   template<typename Variable>
-  friend constexpr auto gradient(Divide const& self, Variable v) {
-    return (gradient(self.lhs_, v)*self.rhs_ - gradient(self.rhs_, v)*self.lhs_)
+  friend constexpr auto derive(Divide const& self, Variable v) {
+    return (derive(self.lhs_, v)*self.rhs_ - derive(self.rhs_, v)*self.lhs_)
            / (self.rhs_*self.rhs_);
   }
 

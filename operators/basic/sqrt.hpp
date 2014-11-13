@@ -16,8 +16,8 @@ class Sqrt : public UnaryOperator<Expr> {
   }
 
   template<typename Variable>
-  friend constexpr auto gradient(Sqrt const& self, Variable v) {
-    return gradient(self.expr_, v) / (2 * sqrt(self.expr_));
+  friend constexpr auto derive(Sqrt const& self, Variable v) {
+    return derive(self.expr_, v) / (2 * sqrt(self.expr_));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Sqrt const& self) {

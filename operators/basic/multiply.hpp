@@ -17,8 +17,8 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
   }
 
   template<typename Variable>
-  friend constexpr auto gradient(Multiply const& self, Variable v) {
-    return self.lhs_*gradient(self.rhs_, v) + self.rhs_*gradient(self.lhs_, v);
+  friend constexpr auto derive(Multiply const& self, Variable v) {
+    return self.lhs_*derive(self.rhs_, v) + self.rhs_*derive(self.lhs_, v);
   }
 
   enum { precendence = 3 };

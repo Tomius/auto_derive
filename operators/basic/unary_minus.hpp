@@ -16,8 +16,8 @@ class UnaryMinus : public UnaryOperator<Expr> {
   }
 
   template<typename Variable>
-  friend constexpr auto gradient(UnaryMinus const& self, Variable v) {
-    return -gradient(self.expr_, v);
+  friend constexpr auto derive(UnaryMinus const& self, Variable v) {
+    return -derive(self.expr_, v);
   }
 
   enum { precendence = 2 };

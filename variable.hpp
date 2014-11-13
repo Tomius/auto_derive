@@ -34,12 +34,12 @@ class Variable : public Function {
     return VariableValue<T, Name>(value);
   }
 
-  friend constexpr auto gradient(Variable self, Variable v) {
+  friend constexpr auto derive(Variable self, Variable v) {
     return PlusOne<T>{};
   }
 
   template<typename U, typename Name2>
-  friend constexpr auto gradient(Variable self, Variable<U, Name2> v) {
+  friend constexpr auto derive(Variable self, Variable<U, Name2> v) {
     return Zero<U>{};
   }
 

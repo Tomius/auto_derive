@@ -17,9 +17,9 @@ class Abs : public UnaryOperator<Expr> {
   }
 
   template<typename Variable>
-  friend constexpr auto gradient(Abs self, Variable v) {
+  friend constexpr auto derive(Abs self, Variable v) {
     // abs(f(x))' = sgn(f(x)) * f(x)' = f(x) / |f(x)| * f(x)'
-    return (self.expr_ / self) * gradient(self.expr_, v);
+    return (self.expr_ / self) * derive(self.expr_, v);
   }
 
   friend std::ostream& operator<<(std::ostream& os, Abs const& self) {

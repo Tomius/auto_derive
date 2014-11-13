@@ -38,8 +38,8 @@ constexpr Zero<T> sin(Zero<T> t) {
 namespace auto_derive {
 
 template <typename Expr, typename Variable>
-constexpr auto gradient(Sin<Expr> const& sin, Variable v) {
-  return cos(sin.expr()) * gradient(sin.expr(), v);
+constexpr auto derive(Sin<Expr> const& sin, Variable v) {
+  return cos(sin.expr()) * derive(sin.expr(), v);
 }
 
 }

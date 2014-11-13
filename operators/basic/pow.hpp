@@ -21,11 +21,11 @@ class Pow : public BinaryOperator<Lhs, Rhs> {
   // (f^g)' = f^g * g' * ln(f) + f^(g-1) * g * f'
   // See http://mathforum.org/library/drmath/view/53679.html - equation [10]
   template<typename Variable>
-  friend constexpr auto gradient(Pow const& self, Variable v) {
+  friend constexpr auto derive(Pow const& self, Variable v) {
     auto const& f = self.lhs_;
     auto const& g = self.rhs_;
 
-    return pow(f, g) * gradient(g, v) * log(f) + pow(f, g-1) * g * gradient(f, v);
+    return pow(f, g) * derive(g, v) * log(f) + pow(f, g-1) * g * derive(f, v);
   }
 
   friend std::ostream& operator<<(std::ostream& os, Pow const& self) {

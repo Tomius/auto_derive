@@ -39,8 +39,8 @@ constexpr PlusOne<T> cos(Zero<T> t) {
 namespace auto_derive {
 
 template <typename Expr, typename Variable>
-constexpr auto gradient(Cos<Expr> const& cos, Variable v) {
-  return -sin(cos.expr()) * gradient(cos.expr(), v);
+constexpr auto derive(Cos<Expr> const& cos, Variable v) {
+  return -sin(cos.expr()) * derive(cos.expr(), v);
 }
 
 }
