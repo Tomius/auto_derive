@@ -9,10 +9,21 @@
 #include "basic/multiply.hpp"
 #include "basic/pow.hpp"
 #include "basic/sqrt.hpp"
+#include "basic/square.hpp"
 #include "basic/subtract.hpp"
 #include "basic/unary_minus.hpp"
 
 #include "trig/sin.hpp"
 #include "trig/cos.hpp"
+#include "trig/tan.hpp"
+
+#include "trig/sinh.hpp"
+#include "trig/cosh.hpp"
+#include "trig/tanh.hpp"
+
+#include "trig/asin.hpp"
+#include "trig/acos.hpp"
+#include "trig/atan.hpp"
+#include "trig/atan2.hpp"
 
 #endif

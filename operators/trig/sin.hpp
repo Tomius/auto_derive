@@ -2,7 +2,6 @@
 #define OPERATORS_TRIG_SIN_HPP_
 
 #include <cmath>
-#include "../../variable.hpp"
 #include "../unary_operator.hpp"
 
 namespace auto_derive {
@@ -17,7 +16,7 @@ class Sin : public UnaryOperator<Expr> {
   }
 
   friend std::ostream& operator<<(std::ostream& os, Sin const& self) {
-    return os << "sin(" << self.expr_ << ")";
+    return os << "sin(" << self.expr_ << ')';
   }
 };
 
@@ -34,6 +33,7 @@ constexpr Zero<T> sin(Zero<T> t) {
 }
 
 #include "./cos.hpp"
+#include "../basic/multiply.hpp"
 
 namespace auto_derive {
 

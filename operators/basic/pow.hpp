@@ -1,10 +1,9 @@
 #ifndef OPERATORS_BASIC_POW_HPP_
 #define OPERATORS_BASIC_POW_HPP_
 
-#include "../../variable.hpp"
-#include "../binary_operator.hpp"
-#include "./divide.hpp"
 #include "./log.hpp"
+#include "./divide.hpp"
+#include "../binary_operator.hpp"
 
 namespace auto_derive {
 

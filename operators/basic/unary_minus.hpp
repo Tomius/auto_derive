@@ -1,7 +1,6 @@
 #ifndef OPERATORS_BASIC_UNARY_MINUS_HPP_
 #define OPERATORS_BASIC_UNARY_MINUS_HPP_
 
-#include "../../variable.hpp"
 #include "../unary_operator.hpp"
 
 namespace auto_derive {

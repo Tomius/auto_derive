@@ -1,9 +1,8 @@
 #ifndef OPERATORS_BASIC_SUBTRACT_HPP_
 #define OPERATORS_BASIC_SUBTRACT_HPP_
 
-#include "../../variable.hpp"
-#include "../binary_operator.hpp"
 #include "./unary_minus.hpp"
+#include "../binary_operator.hpp"
 
 namespace auto_derive {
 

@@ -2,7 +2,6 @@
 #define OPERATORS_TRIG_COS_HPP_
 
 #include <cmath>
-#include "../../variable.hpp"
 #include "../unary_operator.hpp"
 
 namespace auto_derive {
@@ -17,7 +16,7 @@ class Cos : public UnaryOperator<Expr> {
   }
 
   friend std::ostream& operator<<(std::ostream& os, Cos const& self) {
-    return os << "cos(" << self.expr_ << ")";
+    return os << "cos(" << self.expr_ << ')';
   }
 };
 
@@ -34,6 +33,7 @@ constexpr PlusOne<T> cos(Zero<T> t) {
 }
 
 #include "./sin.hpp"
+#include "../basic/multiply.hpp"
 #include "../basic/unary_minus.hpp"
 
 namespace auto_derive {

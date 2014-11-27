@@ -1,9 +1,8 @@
 #ifndef OPERATORS_BASIC_LOG_HPP_
 #define OPERATORS_BASIC_LOG_HPP_
 
-#include "../../variable.hpp"
-#include "../unary_operator.hpp"
 #include "./divide.hpp"
+#include "../unary_operator.hpp"
 
 namespace auto_derive {
 

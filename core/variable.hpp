@@ -20,14 +20,23 @@ class Variable : public Function {
  public:
   constexpr Variable(const char* name) : name_(name) {}
 
-  template<typename U, typename... Args>
-  constexpr T operator()(U val, Args&&... args) const {
+  constexpr auto operator()(T value) const {
+    return value;
+  }
+
+  template<typename U, typename Name2, typename... Args>
+  constexpr auto operator()(VariableValue<U, Name2> val, Args&&... args) const {
     return operator()(std::forward<Args>(args)...);
   }
 
   template<typename... Args>
   constexpr T operator()(VariableValue<T, Name> val, Args&&... args) const {
     return val.value;
+  }
+
+  template<typename... Args>
+  constexpr Variable operator()() const {
+    return *this;
   }
 
   constexpr auto operator=(T value) const {

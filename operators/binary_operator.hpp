@@ -1,7 +1,7 @@
 #ifndef OPERATORS_BINARY_OPERATOR_HPP_
 #define OPERATORS_BINARY_OPERATOR_HPP_
 
-#include "../types.hpp"
+#include "../core/variable.hpp"
 
 namespace auto_derive {
 

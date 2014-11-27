@@ -1,7 +1,6 @@
 #ifndef OPERATORS_BASIC_SQRT_HPP_
 #define OPERATORS_BASIC_SQRT_HPP_
 
-#include "../../variable.hpp"
 #include "../unary_operator.hpp"
 
 namespace auto_derive {

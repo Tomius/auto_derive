@@ -112,7 +112,7 @@ namespace auto_derive {
 // since this depends on the variable class, and the variable class depends
 // on the constant type.
 template<typename T, typename Variable>
-constexpr auto derive(Constant<T> self, Variable v) {
+constexpr Zero<T> derive(Constant<T> self, Variable v) {
   return Zero<T>{};
 }
 

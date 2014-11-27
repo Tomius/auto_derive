@@ -1,11 +1,11 @@
 #ifndef OPERATORS_BASIC_DIVIDE_HPP_
 #define OPERATORS_BASIC_DIVIDE_HPP_
 
-#include "../../variable.hpp"
-#include "../binary_operator.hpp"
+#include "./square.hpp"
 #include "./subtract.hpp"
 #include "./multiply.hpp"
 #include "./unary_minus.hpp"
+#include "../binary_operator.hpp"
 
 namespace auto_derive {
 
@@ -21,7 +21,7 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
   template<typename Variable>
   friend constexpr auto derive(Divide const& self, Variable v) {
     return (derive(self.lhs_, v)*self.rhs_ - derive(self.rhs_, v)*self.lhs_)
-           / (self.rhs_*self.rhs_);
+           / square(self.rhs_);
   }
 
   enum { precendence = 3 };

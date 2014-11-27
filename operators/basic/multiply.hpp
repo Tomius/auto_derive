@@ -1,9 +1,8 @@
 #ifndef OPERATORS_BASIC_MULTIPLY_HPP_
 #define OPERATORS_BASIC_MULTIPLY_HPP_
 
-#include "../../variable.hpp"
-#include "../binary_operator.hpp"
 #include "./add.hpp"
+#include "../binary_operator.hpp"
 
 namespace auto_derive {
 
