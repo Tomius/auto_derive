@@ -13,7 +13,7 @@ void functions() {
   // The use of auto is highly recommended to maintain readability
   constexpr auto g = x + 2;
 
-  // The function objects can be evaluted using the function call syntax
+  // The function objects can be evaluated using the function call syntax
   constexpr int value = g(1);
 
   // The result is of course 3
@@ -89,9 +89,9 @@ void higher_level_derivatives() {
   // "syntactic sugar" for this operation.
   STATIC_ASSERT_EQUALS(auto_derive::derive<3>(f, x), 6);
 
-  // Unfortuntelly, the argument dependent lookup won't work for the nth
+  // Unfortunately, the argument dependent lookup won't work for the nth
   // derivative, so you must specify the namespace too. Though a simple using
-  // statment can solve this.
+  // statement can solve this.
   using auto_derive::derive;
   STATIC_ASSERT_EQUALS(derive<3>(f, x), 6);
 }
@@ -106,7 +106,7 @@ void more_functions() {
   // you can print functions out simply with operator<<
   std::cout << dfdx << std::endl;
 
-  // the evalutaion is done run-time (calls std::pow, thats not constexpr).
+  // the evaluation is done run-time (calls std::pow, thats not constexpr).
   // but the derivation was done compile-time.
   double value = dfdx(x=2, y=3);
   ASSERT_EQUALS(value, 3*pow(2, 3-1));
