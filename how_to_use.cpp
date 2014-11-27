@@ -1,7 +1,6 @@
 #include "all.hpp"
 #include "test/assert_equals.hpp"
 
-// the syntax of declaring variable, functions expression and evaluation
 void functions() {
   // In order to declare functions, you need to declare the variables first,
   // that the function will use. The DECLARE_VARIABLE(type, variable_name) macro
@@ -21,7 +20,6 @@ void functions() {
   STATIC_ASSERT_EQUALS(value, 3);
 }
 
-// functions operating on more than one variables
 void multi_variable_functions() {
   DECLARE_VARIABLE(double, x);
   DECLARE_VARIABLE(double, y);
@@ -52,7 +50,6 @@ void multi_variable_functions() {
   STATIC_ASSERT_EQUALS(f(5), f(x=5, y=5));
 }
 
-// syntax of derivation
 void derivation() {
   DECLARE_VARIABLE(int, x);
   constexpr auto f = x + 2;
@@ -66,7 +63,6 @@ void derivation() {
   STATIC_ASSERT_EQUALS(derive(f, y), 0);
 }
 
-// lets make the variables global
 DECLARE_VARIABLE(double, x);
 DECLARE_VARIABLE(double, y);
 
