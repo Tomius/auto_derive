@@ -11,8 +11,8 @@ class Log10 : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return std::log10(expr_(std::forward<Args>(args)...));
+  constexpr auto operator()(Args... args) const {
+    return log10(expr_(args...));
   }
 
   template<typename Variable>

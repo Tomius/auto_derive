@@ -10,8 +10,8 @@ class Sqrt : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return std::sqrt(expr_(std::forward<Args>(args)...));
+  constexpr auto operator()(Args... args) const {
+    return sqrt(expr_(args...));
   }
 
   template<typename Variable>

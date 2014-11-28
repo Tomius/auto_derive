@@ -13,8 +13,8 @@ class Tan : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args&&... args) const {
-    return std::tan(expr_(std::forward<Args>(args)...));
+  auto operator()(Args... args) const {
+    return tan(expr_(args...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Tan const& self) {

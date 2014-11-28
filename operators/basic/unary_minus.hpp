@@ -10,8 +10,8 @@ class UnaryMinus : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return -expr_(std::forward<Args>(args)...);
+  constexpr auto operator()(Args... args) const {
+    return -expr_(args...);
   }
 
   template<typename Variable>
@@ -22,7 +22,7 @@ class UnaryMinus : public UnaryOperator<Expr> {
   enum { precendence = 2 };
 
   friend std::ostream& operator<<(std::ostream& os, UnaryMinus const& self) {
-    os << put_parenthesis(precendence) << "-" << self.expr_;
+    os << set_precendence(precendence) << "-" << self.expr_;
     return os;
   }
 };

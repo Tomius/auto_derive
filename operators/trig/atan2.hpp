@@ -11,9 +11,8 @@ class Atan2 : public BinaryOperator<Lhs, Rhs> {
   USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
-  auto operator()(Args&&... args) const {
-    return std::atan2(lhs_(std::forward<Args>(args)...),
-                      rhs_(std::forward<Args>(args)...));
+  auto operator()(Args... args) const {
+    return atan2(lhs_(args...), rhs_(args...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Atan2 const& self) {

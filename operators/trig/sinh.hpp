@@ -11,8 +11,8 @@ class Sinh : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args&&... args) const {
-    return std::sinh(expr_(std::forward<Args>(args)...));
+  auto operator()(Args... args) const {
+    return sinh(expr_(args...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Sinh const& self) {

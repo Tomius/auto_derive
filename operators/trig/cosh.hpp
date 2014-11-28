@@ -11,8 +11,8 @@ class Cosh : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args&&... args) const {
-    return std::cosh(expr_(std::forward<Args>(args)...));
+  auto operator()(Args... args) const {
+    return cosh(expr_(args...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Cosh const& self) {

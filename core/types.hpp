@@ -2,7 +2,6 @@
 #define TYPES_HPP_
 
 #include <cmath>
-#include <iostream>
 #include <type_traits>
 #include "./parenthesis.hpp"
 
@@ -36,7 +35,7 @@ struct Constant : public Expression {
   constexpr operator T() const { return value; }
 
   template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
+  constexpr T operator()(Args... args) const {
     return value;
   }
 
@@ -108,15 +107,19 @@ struct Zero : Constant<T>, ZeroType {
 
 namespace auto_derive {
 
-// The derivation of a Constant have to defined out-of-line,
-// since this depends on the variable class, and the variable class depends
-// on the constant type.
+// derive(constant, anything) == 0
 template<typename T, typename Variable>
-constexpr Zero<T> derive(Constant<T> self, Variable v) {
+constexpr Zero<T> derive(Constant<T>, Variable) {
   return Zero<T>{};
 }
 
+// the Constant<T> might get casted into a T, for example when adding two
+// constants together. We want to be able to further derive the result though.
+template<typename T, typename... Args>
+constexpr Zero<T> derive(T, Variable<T, Args...>) {
+  return Zero<T>{};
 }
+} // namespace auto_derive
 
 
 #endif

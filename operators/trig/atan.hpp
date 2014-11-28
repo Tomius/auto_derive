@@ -15,8 +15,8 @@ class Atan : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args&&... args) const {
-    return std::atan(expr_(std::forward<Args>(args)...));
+  auto operator()(Args... args) const {
+    return atan(expr_(args...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Atan const& self) {

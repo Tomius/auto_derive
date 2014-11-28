@@ -1,5 +1,4 @@
 #include <cassert>
-#include <iostream>
 #include <type_traits>
 #include "../all.hpp"
 #include "./assert_equals.hpp"

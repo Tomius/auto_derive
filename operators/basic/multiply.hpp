@@ -11,8 +11,8 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
   USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_(std::forward<Args>(args)...) * rhs_(std::forward<Args>(args)...);
+  constexpr auto operator()(Args... args) const {
+    return lhs_(args...) * rhs_(args...);
   }
 
   template<typename Variable>
@@ -25,9 +25,9 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
   friend std::ostream& operator<<(std::ostream& os, Multiply const& self) {
     if (!IsFunction<Rhs>()) {
       // f(x)*c should be printed as c*f(x) by convention
-      os << put_parenthesis(precendence) << self.rhs_ << "*" << self.lhs_;
+      os << set_precendence(precendence) << self.rhs_ << "*" << self.lhs_;
     } else {
-      os << put_parenthesis(precendence) << self.lhs_ << "*" << self.rhs_;
+      os << set_precendence(precendence) << self.lhs_ << "*" << self.rhs_;
     }
     return os;
   }

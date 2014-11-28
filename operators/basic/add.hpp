@@ -10,8 +10,8 @@ class Add : public BinaryOperator<Lhs, Rhs> {
   USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return lhs_(std::forward<Args>(args)...) + rhs_(std::forward<Args>(args)...);
+  constexpr auto operator()(Args... args) const {
+    return lhs_(args...) + rhs_(args...);
   }
 
   template<typename Variable>
@@ -22,7 +22,7 @@ class Add : public BinaryOperator<Lhs, Rhs> {
   enum { precendence = 4 };
 
   friend std::ostream& operator<<(std::ostream& os, Add const& self) {
-    os << put_parenthesis(precendence) << self.lhs_ << "+" << self.rhs_;
+    os << set_precendence(precendence) << self.lhs_ << "+" << self.rhs_;
     return os;
   }
 };

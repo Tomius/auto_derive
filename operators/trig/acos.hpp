@@ -15,17 +15,17 @@ class Acos : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args&&... args) const {
-    return std::acos(expr_(std::forward<Args>(args)...));
+  auto operator()(Args... args) const {
+    return acos(expr_(args...));
+  }
+
+  template <typename Variable>
+  friend constexpr auto derive(Acos const& self, Variable v) {
+    return -derive(self.expr(), v) / sqrt(1 - square(self.expr()));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Acos const& self) {
     return os << "acos(" << self.expr_ << ')';
-  }
-
-  template <typename Variable>
-  friend constexpr auto derive(Acos const& acos, Variable v) {
-    return -derive(acos.expr(), v) / sqrt(1 - square(acos.expr()));
   }
 };
 

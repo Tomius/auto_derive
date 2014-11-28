@@ -11,12 +11,12 @@ class Abs : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  constexpr auto operator()(Args&&... args) const {
-    return std::abs(expr_(std::forward<Args>(args)...));
+  constexpr auto operator()(Args... args) const {
+    return abs(expr_(args...));
   }
 
   template<typename Variable>
-  friend constexpr auto derive(Abs self, Variable v) {
+  friend constexpr auto derive(Abs const& self, Variable v) {
     // abs(f(x))' = sgn(f(x)) * f(x)' = f(x) / |f(x)| * f(x)'
     return (self.expr_ / self) * derive(self.expr_, v);
   }
@@ -48,7 +48,7 @@ constexpr PlusOne<T> abs(MinusOne<T> expr) {
 
 template<typename T>
 constexpr Constant<T> abs(Constant<T> expr) {
-  return expr.value > 0 ? expr : Constant<T>{-expr.value};
+  return expr.value > T{} ? expr : Constant<T>{-expr.value};
 }
 
 template<typename Expr>

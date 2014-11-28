@@ -14,8 +14,8 @@ class Tanh : public UnaryOperator<Expr> {
   USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args&&... args) const {
-    return std::tanh(expr_(std::forward<Args>(args)...));
+  auto operator()(Args... args) const {
+    return tanh(expr_(args...));
   }
 
   friend std::ostream& operator<<(std::ostream& os, Tanh const& self) {

@@ -3,7 +3,9 @@
 
 #include "./multiply.hpp"
 
+namespace auto_derive {
 template<typename T>
 constexpr auto square(T const& t) { return t*t; }
+}
 
 #endif

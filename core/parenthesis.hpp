@@ -1,17 +1,25 @@
 #ifndef PARENTHESIS_HPP_
 #define PARENTHESIS_HPP_
 
+// libstdc++-4.8, c++1y mode bug fix
+#include <stdio.h>
+#undef gets
+char *gets(char *p) {
+  scanf("%[^\n]%*c", p);
+  return p;
+}
+
 #include <iostream>
 #include <type_traits>
 
 namespace auto_derive {
 
-struct put_parenthesis {
+struct set_precendence {
   int precendence;
-  explicit put_parenthesis(int precendence) : precendence(precendence) {}
+  explicit set_precendence(int precendence) : precendence(precendence) {}
 };
 
-class PutParenthesisPrinter {
+class PrecedenceAwarePrinter {
  private:
   template<typename T, typename = void>
   struct HasPrecedence : std::false_type { };
@@ -21,11 +29,11 @@ class PutParenthesisPrinter {
       : std::true_type { };
 
  public:
-  PutParenthesisPrinter(std::ostream& os, put_parenthesis context)
+  PrecedenceAwarePrinter(std::ostream& os, set_precendence context)
       : os_(os), context_(context) {}
 
   template<typename T>
-  std::enable_if_t<HasPrecedence<T>::value, PutParenthesisPrinter const&>
+  std::enable_if_t<HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
   operator<<(const T& t) const {
     if (t.precendence > context_.precendence) {
       os_ << '(' << t << ')';
@@ -37,7 +45,7 @@ class PutParenthesisPrinter {
   }
 
   template<typename T>
-  std::enable_if_t<!HasPrecedence<T>::value, PutParenthesisPrinter const&>
+  std::enable_if_t<!HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
   operator<<(const T& t) const {
     os_ << t;
     return *this;
@@ -45,11 +53,11 @@ class PutParenthesisPrinter {
 
  private:
   std::ostream& os_;
-  put_parenthesis context_;
+  set_precendence context_;
 };
 
-PutParenthesisPrinter operator<<(std::ostream& os, put_parenthesis context) {
-  return PutParenthesisPrinter(os, context);
+PrecedenceAwarePrinter operator<<(std::ostream& os, set_precendence context) {
+  return PrecedenceAwarePrinter(os, context);
 }
 
 }
