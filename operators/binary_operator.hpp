@@ -56,7 +56,7 @@ class BinaryOperator<Lhs, Rhs,
   const Constant<Rhs> rhs_;
 };
 
-#define USING_BINARY_OPERATOR(Lhs, Rhs)                \
+#define __AUTO_DERIVE_USING_BINARY_OPERATOR(Lhs, Rhs)                \
 private:                                               \
   using BinaryOperator<Lhs, Rhs>::lhs_;                \
   using BinaryOperator<Lhs, Rhs>::rhs_;                \

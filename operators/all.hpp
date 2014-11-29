@@ -4,6 +4,7 @@
 #include "basic/abs.hpp"
 #include "basic/add.hpp"
 #include "basic/divide.hpp"
+#include "basic/exp.hpp"
 #include "basic/log.hpp"
 #include "basic/log10.hpp"
 #include "basic/multiply.hpp"
@@ -25,5 +26,8 @@
 #include "trig/acos.hpp"
 #include "trig/atan.hpp"
 #include "trig/atan2.hpp"
+
+#undef __AUTO_DERIVE_USING_UNARY_OPERATOR
+#undef __AUTO_DERIVE_USING_BINARY_OPERATOR
 
 #endif

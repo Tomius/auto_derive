@@ -67,7 +67,7 @@ class Variable : public Function {
 
 } // namespace auto_derive
 
-#define DECLARE_VARIABLE(T, X) \
+#define AUTO_DERIVE_VARIABLE(T, X) \
   constexpr auto_derive::Variable<T, struct X> X{#X};
 
 #endif

@@ -1,14 +1,13 @@
 #ifndef OPERATORS_TRIG_COS_HPP_
 #define OPERATORS_TRIG_COS_HPP_
 
-#include <cmath>
 #include "../unary_operator.hpp"
 
 namespace auto_derive {
 
 template<typename Expr>
 class Cos : public UnaryOperator<Expr> {
-  USING_UNARY_OPERATOR(Expr);
+  __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
   auto operator()(Args... args) const {

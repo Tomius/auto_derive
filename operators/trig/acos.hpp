@@ -12,7 +12,7 @@ namespace auto_derive {
 
 template<typename Expr>
 class Acos : public UnaryOperator<Expr> {
-  USING_UNARY_OPERATOR(Expr);
+  __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
   auto operator()(Args... args) const {

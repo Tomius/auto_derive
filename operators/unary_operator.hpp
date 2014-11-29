@@ -33,7 +33,7 @@ protected:
 };
 
 
-#define USING_UNARY_OPERATOR(Expr)                   \
+#define __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr)                   \
 private:                                             \
   using UnaryOperator<Expr>::expr_;                  \
 public:                                              \

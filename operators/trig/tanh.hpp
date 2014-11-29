@@ -1,7 +1,6 @@
 #ifndef OPERATORS_TRIG_TANH_HPP_
 #define OPERATORS_TRIG_TANH_HPP_
 
-#include <cmath>
 #include "./sinh.hpp"
 #include "./cosh.hpp"
 #include "../basic/divide.hpp"
@@ -11,7 +10,7 @@ namespace auto_derive {
 
 template<typename Expr>
 class Tanh : public UnaryOperator<Expr> {
-  USING_UNARY_OPERATOR(Expr);
+  __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
   auto operator()(Args... args) const {

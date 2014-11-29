@@ -7,7 +7,7 @@ namespace auto_derive {
 
 template<typename Expr>
 class Sqrt : public UnaryOperator<Expr> {
-  USING_UNARY_OPERATOR(Expr);
+  __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
   constexpr auto operator()(Args... args) const {

@@ -8,7 +8,7 @@ namespace auto_derive {
 
 template<typename Lhs, typename Rhs>
 class Atan2 : public BinaryOperator<Lhs, Rhs> {
-  USING_BINARY_OPERATOR(Lhs, Rhs);
+  __AUTO_DERIVE_USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
   auto operator()(Args... args) const {
@@ -21,21 +21,21 @@ class Atan2 : public BinaryOperator<Lhs, Rhs> {
 
   template <typename Variable>
   friend constexpr auto derive(Atan2 const& atan2, Variable v) {
-    // At the points where the derivative exists, atan2(x, y) is,
+    // At the points where the derivative exists, atan2(y, x) is,
     // except for a constant, equal to atan(y/x).
-    return derive(atan2.rhs() / atan2.lhs(), v);
+    return derive(atan(atan2.lhs() / atan2.rhs()), v);
   }
 };
 
 template<typename Lhs, typename Rhs>
 constexpr auto atan2(Lhs const& lhs, Rhs const& rhs)
-    -> std::enable_if_t<!IsZero<Rhs>(), Atan2<Lhs, Rhs>> {
+    -> std::enable_if_t<!IsZero<Lhs>(), Atan2<Lhs, Rhs>> {
   return {lhs, rhs};
 }
 
-template<typename Lhs, typename T>
-constexpr Zero<T> atan2(Lhs const& lhs, Zero<T> rhs) {
-  return rhs;
+template<typename T, typename Rhs>
+constexpr Zero<T> atan2(Zero<T> lhs, Rhs const& rhs) {
+  return lhs;
 }
 
 }

@@ -8,7 +8,7 @@ namespace auto_derive {
 
 template<typename Expr>
 class Log10 : public UnaryOperator<Expr> {
-  USING_UNARY_OPERATOR(Expr);
+  __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
   constexpr auto operator()(Args... args) const {
@@ -28,7 +28,7 @@ class Log10 : public UnaryOperator<Expr> {
 };
 
 template<typename Expr>
-constexpr std::enable_if_t<!IsPlusOne<Expr>(), Log<Expr>> log10(Expr const& expr) {
+constexpr std::enable_if_t<!IsPlusOne<Expr>(), Log10<Expr>> log10(Expr const& expr) {
   return {expr};
 }
 

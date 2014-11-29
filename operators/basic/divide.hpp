@@ -11,7 +11,7 @@ namespace auto_derive {
 
 template<typename Lhs, typename Rhs>
 class Divide : public BinaryOperator<Lhs, Rhs> {
-  USING_BINARY_OPERATOR(Lhs, Rhs);
+  __AUTO_DERIVE_USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
   constexpr auto operator()(Args... args) const {

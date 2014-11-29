@@ -1,13 +1,11 @@
-#include <cassert>
-#include <type_traits>
 #include "../all.hpp"
 #include "./assert_equals.hpp"
 
-DECLARE_VARIABLE(double, x);
-DECLARE_VARIABLE(double, y);
+AUTO_DERIVE_VARIABLE(double, x);
+AUTO_DERIVE_VARIABLE(double, y);
 
 void test0() {
-  DECLARE_VARIABLE(double, x);
+  AUTO_DERIVE_VARIABLE(double, x);
   static_assert(!std::is_same<decltype(x), decltype(::y)>::value, "error");
   static_assert(std::is_same<decltype(x), decltype(::x)>::value, "error");
 }
@@ -91,7 +89,7 @@ void test6() {
 
 void test7() {
   constexpr auto f = ((13*(x+x)*7-x+y*4*x)*(37-x*y*x+2+y*x));
-  constexpr auto dx3 = auto_derive::derive<3>(f, x);
+  constexpr auto dx3 = derive<3>(f, x);
 
   STATIC_ASSERT_EQUALS(dx3(x=5, y=2), -2268);
   std::cout << "d^3/d^3x(" << f << ") = " << dx3 << std::endl;
@@ -132,4 +130,5 @@ int main() {
   test8(); std::cout << std::endl;
   test9(); std::cout << std::endl;
   test10(); std::cout << std::endl;
+  test11();
 }
