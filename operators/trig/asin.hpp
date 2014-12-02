@@ -1,7 +1,6 @@
 #ifndef OPERATORS_TRIG_ASIN_HPP_
 #define OPERATORS_TRIG_ASIN_HPP_
 
-#include <cmath>
 #include "../basic/divide.hpp"
 #include "../basic/square.hpp"
 #include "../basic/subtract.hpp"

@@ -153,6 +153,28 @@ void simplifications() {
   std::cout << derive(x*x*x, x) << "\n\n";
 }
 
+void integers() {
+  // By default, integral constants in function expressions are promoted into
+  // doubles. So the following functions are equivalent.
+  constexpr auto f = atan2(y-x/2, x*y);
+  constexpr auto g = atan2(y-x/2.0, x*y);
+  ASSERT_EQUALS(derive(f, x)(x=1, y=2), -0.64);
+  ASSERT_EQUALS(derive(g, x)(x=1, y=2), -0.64);
+
+  // You can turn this off by the following macro (before including auto_derive):
+  // #define AUTO_DERIVE_PROMOTE_INTEGRAL_CONSTANTS 0
+
+  // But note, that after this, derive(f, x) will contain some integer divisions,
+  // so it won't be equal to derive(g, x). The result of this is usually
+  // disastrous, but sometimes it might be wanted. If the promotion is
+  // turned on, you can use auto_derive::Constant<int> to explicitly create an
+  // integer constant.
+  constexpr auto f2 = atan2(y-x/auto_derive::Constant<int>(2), x*y);
+  constexpr auto g2 = atan2(y-x/auto_derive::Constant<double>(2), x*y);
+  ASSERT_EQUALS(derive(f2, x)(x=1, y=2), -0.48);
+  ASSERT_EQUALS(derive(g2, x)(x=1, y=2), -0.64);
+}
+
 int main() {
   functions();
   multi_variable_functions();
@@ -162,4 +184,5 @@ int main() {
   more_functions();
   higher_order_functions();
   simplifications();
+  integers();
 }

@@ -55,23 +55,23 @@ constexpr auto operator/(Lhs const& lhs, MinusOne<T> rhs)
 }
 
 template<typename T, typename U>
-constexpr PlusOne<decltype(T{1}/U{1})> operator/(PlusOne<T> lhs, PlusOne<U> rhs) {
-  return PlusOne<decltype(T{1}/U{1})>{};
+constexpr auto operator/(PlusOne<T> lhs, PlusOne<U> rhs) {
+  return PlusOne<decltype(lhs.value/rhs.value)>{};
 }
 
 template<typename T, typename U>
-constexpr PlusOne<decltype(T{-1}/U{-1})> operator/(MinusOne<T> lhs, MinusOne<U> rhs) {
-  return PlusOne<decltype(T{-1}/U{-1})>{};
+constexpr auto operator/(MinusOne<T> lhs, MinusOne<U> rhs) {
+  return PlusOne<decltype(lhs.value/rhs.value)>{};
 }
 
 template<typename T, typename U>
-constexpr MinusOne<decltype(T{1}/U{-1})> operator/(PlusOne<T> lhs, MinusOne<U> rhs) {
-  return MinusOne<decltype(T{1}/U{-1})>{};
+constexpr auto operator/(PlusOne<T> lhs, MinusOne<U> rhs) {
+  return MinusOne<decltype(lhs.value/rhs.value)>{};
 }
 
 template<typename T, typename U>
-constexpr MinusOne<decltype(T{-1}/U{1})> operator/(MinusOne<T> lhs, PlusOne<U> rhs) {
-  return MinusOne<decltype(T{-1}/U{1})>{};
+constexpr auto operator/(MinusOne<T> lhs, PlusOne<U> rhs) {
+  return MinusOne<decltype(lhs.value/rhs.value)>{};
 }
 
 template<typename T, typename Rhs>

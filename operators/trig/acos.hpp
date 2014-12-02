@@ -1,7 +1,6 @@
 #ifndef OPERATORS_TRIG_ACOS_HPP_
 #define OPERATORS_TRIG_ACOS_HPP_
 
-#include <cmath>
 #include "../basic/divide.hpp"
 #include "../basic/square.hpp"
 #include "../basic/subtract.hpp"

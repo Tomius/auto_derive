@@ -55,8 +55,8 @@ constexpr auto operator*(PlusOne<T> lhs, Rhs const& rhs)
 }
 
 template<typename T, typename U>
-constexpr PlusOne<decltype(T{1}*U{1})> operator*(PlusOne<T> lhs, PlusOne<U> rhs) {
-  return PlusOne<decltype(T{1}*U{1})>{};
+constexpr auto operator*(PlusOne<T> lhs, PlusOne<U> rhs) {
+  return PlusOne<decltype(lhs.value*rhs.value)>{};
 }
 
 template<typename Lhs, typename T>
@@ -72,18 +72,18 @@ constexpr auto operator*(MinusOne<T> lhs, Rhs const& rhs)
 }
 
 template<typename T, typename U>
-constexpr PlusOne<decltype(T{-1}*U{-1})> operator*(MinusOne<T> lhs, MinusOne<U> rhs) {
-  return PlusOne<decltype(T{-1}*U{-1})>{};
+constexpr auto operator*(MinusOne<T> lhs, MinusOne<U> rhs) {
+  return PlusOne<decltype(lhs.value*rhs.value)>{};
 }
 
 template<typename T, typename U>
-constexpr MinusOne<decltype(T{1}*U{-1})> operator*(PlusOne<T> lhs, MinusOne<U> rhs) {
-  return MinusOne<decltype(T{1}*U{-1})>{};
+constexpr auto operator*(PlusOne<T> lhs, MinusOne<U> rhs) {
+  return MinusOne<decltype(lhs.value*rhs.value)>{};
 }
 
 template<typename T, typename U>
-constexpr MinusOne<decltype(T{-1}*U{1})> operator*(MinusOne<T> lhs, PlusOne<U> rhs) {
-  return MinusOne<decltype(T{-1}*U{1})>{};
+constexpr auto operator*(MinusOne<T> lhs, PlusOne<U> rhs) {
+  return MinusOne<decltype(lhs.value*rhs.value)>{};
 }
 
 template<typename Lhs, typename T>
@@ -117,8 +117,8 @@ constexpr Zero<T> operator*(Zero<T> lhs, MinusOne<U> rhs) {
 }
 
 template<typename T, typename U>
-constexpr Zero<decltype(T{0}*U{0})> operator*(Zero<T> lhs, Zero<U> rhs) {
-  return Zero<decltype(T{0}*U{0})>{};
+constexpr auto operator*(Zero<T> lhs, Zero<U> rhs) {
+  return Zero<decltype(lhs.value*rhs.value)>{};
 }
 
 } // namespace auto_derive

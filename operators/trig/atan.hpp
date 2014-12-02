@@ -1,11 +1,9 @@
 #ifndef OPERATORS_TRIG_ATAN_HPP_
 #define OPERATORS_TRIG_ATAN_HPP_
 
-#include <cmath>
+#include "../basic/add.hpp"
 #include "../basic/divide.hpp"
 #include "../basic/square.hpp"
-#include "../basic/subtract.hpp"
-#include "../basic/unary_minus.hpp"
 #include "../unary_operator.hpp"
 
 namespace auto_derive {
@@ -24,8 +22,8 @@ class Atan : public UnaryOperator<Expr> {
   }
 
   template <typename Variable>
-  friend constexpr auto derive(Atan const& atan, Variable v) {
-    return derive(atan.expr(), v) / (square(atan.expr()) + 1);
+  friend constexpr auto derive(Atan const& self, Variable v) {
+    return derive(self.expr(), v) / (square(self.expr()) + 1);
   }
 };
 
