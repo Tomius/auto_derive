@@ -25,7 +25,8 @@ class PrecedenceAwarePrinter {
   struct HasPrecedence : std::false_type { };
 
   template<typename T>
-  struct HasPrecedence<T, decltype(std::declval<T>().precendence, void())>
+  struct HasPrecedence<T, decltype(std::declval<T>().precendence,
+                                   std::declval<void>())>
       : std::true_type { };
 
  public:

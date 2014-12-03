@@ -22,7 +22,7 @@ class Add : public BinaryOperator<Lhs, Rhs> {
   enum { precendence = 4 };
 
   friend std::ostream& operator<<(std::ostream& os, Add const& self) {
-    os << set_precendence(precendence) << self.lhs_ << "+" << self.rhs_;
+    os << set_precendence(precendence) << self.lhs_ << '+' << self.rhs_;
     return os;
   }
 };

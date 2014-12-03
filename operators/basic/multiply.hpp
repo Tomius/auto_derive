@@ -25,9 +25,9 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
   friend std::ostream& operator<<(std::ostream& os, Multiply const& self) {
     if (!IsFunction<Rhs>()) {
       // f(x)*c should be printed as c*f(x) by convention
-      os << set_precendence(precendence) << self.rhs_ << "*" << self.lhs_;
+      os << set_precendence(precendence) << self.rhs_ << '*' << self.lhs_;
     } else {
-      os << set_precendence(precendence) << self.lhs_ << "*" << self.rhs_;
+      os << set_precendence(precendence) << self.lhs_ << '*' << self.rhs_;
     }
     return os;
   }

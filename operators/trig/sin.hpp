@@ -10,7 +10,7 @@ class Sin : public UnaryOperator<Expr> {
   __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args... args) const {
+  constexpr auto operator()(Args... args) const {
     return sin(expr_(args...));
   }
 
@@ -37,8 +37,8 @@ constexpr Zero<T> sin(Zero<T> t) {
 namespace auto_derive {
 
 template <typename Expr, typename Variable>
-constexpr auto derive(Sin<Expr> const& sin, Variable v) {
-  return cos(sin.expr()) * derive(sin.expr(), v);
+constexpr auto derive(Sin<Expr> const& self, Variable v) {
+  return cos(self.expr()) * derive(self.expr(), v);
 }
 
 }

@@ -11,7 +11,7 @@ class Cosh : public UnaryOperator<Expr> {
   __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args... args) const {
+  constexpr auto operator()(Args... args) const {
     return cosh(expr_(args...));
   }
 
@@ -39,8 +39,8 @@ constexpr PlusOne<T> cosh(Zero<T> t) {
 namespace auto_derive {
 
 template <typename Expr, typename Variable>
-constexpr auto derive(Cosh<Expr> const& cosh, Variable v) {
-  return sinh(cosh.expr()) * derive(cosh.expr(), v);
+constexpr auto derive(Cosh<Expr> const& self, Variable v) {
+  return sinh(self.expr()) * derive(self.expr(), v);
 }
 
 }

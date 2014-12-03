@@ -12,7 +12,7 @@ class Pow : public BinaryOperator<Lhs, Rhs> {
   __AUTO_DERIVE_USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
-  auto operator()(Args... args) const {
+  constexpr auto operator()(Args... args) const {
     return pow(lhs_(args...), rhs_(args...));
   }
 
@@ -25,7 +25,7 @@ class Pow : public BinaryOperator<Lhs, Rhs> {
   }
 
   friend std::ostream& operator<<(std::ostream& os, Pow const& self) {
-    return os << "pow(" << self.lhs_ << ", " << self.rhs_ << ')';
+    return os << "pow(" << self.lhs_ << ',' << self.rhs_ << ')';
   }
 };
 

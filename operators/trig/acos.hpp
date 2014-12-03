@@ -14,7 +14,7 @@ class Acos : public UnaryOperator<Expr> {
   __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args... args) const {
+  constexpr auto operator()(Args... args) const {
     return acos(expr_(args...));
   }
 

@@ -23,7 +23,7 @@ class Subtract : public BinaryOperator<Lhs, Rhs> {
   enum { precendence = 4 };
 
   friend std::ostream& operator<<(std::ostream& os, Subtract const& self) {
-    os << set_precendence(precendence) << self.lhs_ << "-";
+    os << set_precendence(precendence) << self.lhs_ << '-';
     os << set_precendence(precendence - 1) << self.rhs_;
     return os;
   }

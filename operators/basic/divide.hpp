@@ -27,7 +27,7 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
   enum { precendence = 3 };
 
   friend std::ostream& operator<<(std::ostream& os, Divide const& self) {
-    os << set_precendence(precendence) << self.lhs_ << "/";
+    os << set_precendence(precendence) << self.lhs_ << '/';
     os << set_precendence(precendence - 1) << self.rhs_;
     return os;
   }

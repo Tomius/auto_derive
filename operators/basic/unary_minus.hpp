@@ -22,7 +22,7 @@ class UnaryMinus : public UnaryOperator<Expr> {
   enum { precendence = 2 };
 
   friend std::ostream& operator<<(std::ostream& os, UnaryMinus const& self) {
-    os << set_precendence(precendence) << "-" << self.expr_;
+    os << set_precendence(precendence) << '-' << self.expr_;
     return os;
   }
 };

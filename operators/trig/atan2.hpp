@@ -11,7 +11,7 @@ class Atan2 : public BinaryOperator<Lhs, Rhs> {
   __AUTO_DERIVE_USING_BINARY_OPERATOR(Lhs, Rhs);
 
   template<typename... Args>
-  auto operator()(Args... args) const {
+  constexpr auto operator()(Args... args) const {
     return atan2(lhs_(args...), rhs_(args...));
   }
 
@@ -20,10 +20,10 @@ class Atan2 : public BinaryOperator<Lhs, Rhs> {
   }
 
   template <typename Variable>
-  friend constexpr auto derive(Atan2 const& atan2, Variable v) {
+  friend constexpr auto derive(Atan2 const& self, Variable v) {
     // At the points where the derivative exists, atan2(y, x) is,
     // except for a constant, equal to atan(y/x).
-    return derive(atan(atan2.lhs() / atan2.rhs()), v);
+    return derive(atan(self.lhs() / self.rhs()), v);
   }
 };
 

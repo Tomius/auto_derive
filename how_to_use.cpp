@@ -1,5 +1,5 @@
-#include "all.hpp"
-#include "test/assert_equals.hpp"
+#include "./all.hpp" // includes everything from the auto_derive library.
+#include "test/assert_equals.hpp" // just to test the calculated values.
 
 void functions() {
   // In order to build a metamathematical function you need a variable first.
@@ -101,7 +101,7 @@ void more_functions() {
   constexpr auto dfdx = derive(f, x);
 
   // You can print functions out simply with operator<<, to check the result
-  std::cout << dfdx << "\n\n";
+  std::cout << "derive(" << f << ", " << x << ") = " << dfdx << "\n\n";
 
   // The evaluation of <cmath> functions are done run-time.
   double value = dfdx(x=2, y=3);
@@ -114,7 +114,7 @@ void more_functions() {
   constexpr auto dgdy = derive(g, y);
 
   // Try guessing the output :D
-  std::cout << dgdy << "\n\n";
+  std::cout << "derive(" << g << ", " << y << ") = " << dgdy << "\n\n";
 
   // The list of the supported functions:
   // +, -, *, /, abs, fabs, exp, log, log10, pow, sqrt,
@@ -133,6 +133,9 @@ void higher_order_functions() {
   STATIC_ASSERT_EQUALS(h(x=5), (2*x + x+2)(x=5));
 }
 
+// just a helper, that prints the argument name, then the argument value
+#define PRINT_NAME_AND_VALUE(X) std::cout << #X << " = " << X << "\n\n";
+
 void simplifications() {
   // Printing a function to an ostream tells you exactly
   // which operations will be done when you evaluate it.
@@ -142,15 +145,15 @@ void simplifications() {
   // compile-time, so they are not actually evaluated. For ex. the derivative
   // of a pow against two different variables yields two different functions,
   // but they were calculated using the same derivation rule.
-  std::cout << derive(pow(x, y), x) << "\n\n"; // pow(x, y-1)*y
-  std::cout << derive(pow(x, y), y) << "\n\n"; // pow(x, y)*log(x)
+  PRINT_NAME_AND_VALUE(derive(pow(x, y), x)); // pow(x, y-1)*y
+  PRINT_NAME_AND_VALUE(derive(pow(x, y), y)); // pow(x, y)*log(x)
   // These are the results of simplifying the following statement:
   // pow(f, g) * derive(g, v) * log(f) + pow(f, g-1) * g * derive(f, v)
 
   // However be prepared that the even the simplified forms usually
   // differ from how a human would derive that function.
   // For example derive(x*x*x, x) is x*x+x*(x+x), not 3*x^2
-  std::cout << derive(x*x*x, x) << "\n\n";
+  PRINT_NAME_AND_VALUE(derive(x*x*x, x));
 }
 
 void integers() {
@@ -161,7 +164,7 @@ void integers() {
   ASSERT_EQUALS(derive(f, x)(x=1, y=2), -0.64);
   ASSERT_EQUALS(derive(g, x)(x=1, y=2), -0.64);
 
-  // You can turn this off by the following macro (before including auto_derive):
+  // You can turn this off with the following macro (before including auto_derive):
   // #define AUTO_DERIVE_PROMOTE_INTEGRAL_CONSTANTS 0
 
   // But note, that after this, derive(f, x) will contain some integer divisions,
@@ -175,6 +178,26 @@ void integers() {
   ASSERT_EQUALS(derive(g2, x)(x=1, y=2), -0.64);
 }
 
+void complex_variables() {
+  using Complex = std::complex<double>;
+
+  // You can use the auto_derive library to derive complex functions too.
+  AUTO_DERIVE_VARIABLE(Complex, x);
+  constexpr auto f = asin(cosh(x));
+  ASSERT_EQUALS(f(x=0.3), (Complex{1.5708, 0.3}));
+
+  Complex dfdx_val = derive(f, x)(x=0.5), i{0, 1};
+
+  // dfdx_val is sqrt(-1), which is matematically +i AND -i.
+  // The result will be one of these two. Note that
+  // std::sqrt({-1, +0}) is +i, but std::sqrt({-1, -0}) is -i,
+  // so the actual result depends on the computational accuracy.
+  assert(equals(dfdx_val, i) || equals(dfdx_val, -i));
+
+  // Basically this library works on any user-defined type, as long as it has
+  // the required function overloads for the used operators.
+}
+
 int main() {
   functions();
   multi_variable_functions();
@@ -185,4 +208,5 @@ int main() {
   higher_order_functions();
   simplifications();
   integers();
+  complex_variables();
 }

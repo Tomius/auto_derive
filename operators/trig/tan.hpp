@@ -12,7 +12,7 @@ class Tan : public UnaryOperator<Expr> {
   __AUTO_DERIVE_USING_UNARY_OPERATOR(Expr);
 
   template<typename... Args>
-  auto operator()(Args... args) const {
+  constexpr auto operator()(Args... args) const {
     return tan(expr_(args...));
   }
 
@@ -21,8 +21,8 @@ class Tan : public UnaryOperator<Expr> {
   }
 
   template <typename Variable>
-  friend constexpr auto derive(Tan const& tan, Variable v) {
-    return 2*derive(tan.expr(), v) / (cos(2 * tan.expr()) + 1);
+  friend constexpr auto derive(Tan const& self, Variable v) {
+    return 2*derive(self.expr(), v) / (cos(2 * self.expr()) + 1);
   }
 };
 
