@@ -10,16 +10,16 @@ Example:
 #include "auto_derive/all.hpp"
 
 int main() {
-AUTO_DERIVE_VARIABLE(double, x);
-AUTO_DERIVE_VARIABLE(double, y);
+  AUTO_DERIVE_VARIABLE(double, x);
+  AUTO_DERIVE_VARIABLE(double, y);
 
-constexpr auto f = atan2(pow(abs(y+x), pow(sqrt(abs(sinh(x)+2)), 2.3)), sin(x)/x);
+  constexpr auto f = atan2(pow(abs(y+x), pow(sqrt(abs(sinh(x)+2)), 2.3)), sin(x)/x);
 
-constexpr auto dgdy = derive(g, y);
+  constexpr auto dgdy = derive(g, y);
 
-constexpr double eval = dgdy(x=2, y=4.2);
+  constexpr double eval = dgdy(x=2, y=4.2);
 
-std::cout << "derive(" << g << ", " << y << ") = " << dgdy << std::endl;
+  std::cout << "derive(" << g << ", " << y << ") = " << dgdy << std::endl;
 }
 ```
 
