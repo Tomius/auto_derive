@@ -17,7 +17,7 @@ int main() {
 
   constexpr auto dgdy = derive(g, y);
 
-  constexpr double eval = dgdy(x=2, y=4.2);
+  double eval = dgdy(x=2, y=4.2);
 
   std::cout << "derive(" << g << ", " << y << ") = " << dgdy << std::endl;
 }
