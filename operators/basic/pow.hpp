@@ -31,7 +31,7 @@ class Pow : public BinaryOperator<Lhs, Rhs> {
 
 template<typename Lhs, typename Rhs>
 constexpr auto pow(Lhs const& lhs, Rhs const& rhs)
-    -> std::enable_if_t<(
+    -> enable_if_t<(
       IsFunction<Lhs>() && !IsZero<Rhs>() && !IsOne<Rhs>())
       || (IsFunction<Rhs>() && !IsZero<Lhs>() && !IsPlusOne<Lhs>()),
     Pow<Lhs, Rhs>> {
@@ -44,24 +44,24 @@ constexpr PlusOne<T> pow(Lhs const& lhs, Zero<T> rhs) {
 }
 
 template<typename T, typename Rhs>
-constexpr std::enable_if_t<!IsZero<Rhs>(), Zero<T>> pow(Zero<T> lhs, Rhs const& rhs) {
+constexpr enable_if_t<!IsZero<Rhs>(), Zero<T>> pow(Zero<T> lhs, Rhs const& rhs) {
   return Zero<T>{};
 }
 
 template<typename Lhs, typename T>
-constexpr std::enable_if_t<!IsZero<Lhs>(), Lhs> pow(Lhs const& lhs, PlusOne<T> rhs) {
+constexpr enable_if_t<!IsZero<Lhs>(), Lhs> pow(Lhs const& lhs, PlusOne<T> rhs) {
   return lhs;
 }
 
 template<typename Lhs, typename T>
 constexpr auto pow(Lhs const& lhs, MinusOne<T> rhs)
-    -> std::enable_if_t<!IsZero<Lhs>(), decltype(PlusOne<T>{} / lhs)> {
+    -> enable_if_t<!IsZero<Lhs>(), decltype(PlusOne<T>{} / lhs)> {
   return PlusOne<T>{} / lhs;
 }
 
 template<typename T, typename Rhs>
 constexpr auto pow(PlusOne<T> lhs, Rhs const& rhs)
-    -> std::enable_if_t<!IsZero<Rhs>() && !IsOne<Rhs>(), PlusOne<T>> {
+    -> enable_if_t<!IsZero<Rhs>() && !IsOne<Rhs>(), PlusOne<T>> {
   return lhs;
 }
 

@@ -29,7 +29,7 @@ class Acos : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr std::enable_if_t<!IsPlusOne<T>(), Acos<T>> acos(T t) {
+constexpr enable_if_t<!IsPlusOne<T>(), Acos<T>> acos(T t) {
   return Acos<T>(t);
 }
 

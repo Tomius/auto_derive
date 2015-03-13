@@ -20,7 +20,7 @@ class Sin : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr std::enable_if_t<!IsZero<T>(), Sin<T>> sin(T t) {
+constexpr enable_if_t<!IsZero<T>(), Sin<T>> sin(T t) {
   return Sin<T>(t);
 }
 

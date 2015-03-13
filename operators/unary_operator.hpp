@@ -13,7 +13,7 @@ template<typename Expr, typename Enable = void>
 class UnaryOperator;
 
 template<typename Expr>
-class UnaryOperator<Expr, std::enable_if_t<IsExpression<Expr>()>>
+class UnaryOperator<Expr, enable_if_t<IsExpression<Expr>()>>
     : public Function  {
  public:
   constexpr UnaryOperator(Expr const& expr) : expr_(expr) {}
@@ -25,7 +25,7 @@ protected:
 };
 
 template<typename Expr>
-class UnaryOperator<Expr, std::enable_if_t<!IsExpression<Expr>()>>
+class UnaryOperator<Expr, enable_if_t<!IsExpression<Expr>()>>
     : public Function  {
  private:
 #if AUTO_DERIVE_PROMOTE_INTEGRAL_CONSTANTS

@@ -27,7 +27,7 @@ class Exp : public UnaryOperator<Expr> {
 
 template<typename Expr>
 constexpr auto exp(Expr const& expr)
-    -> std::enable_if_t<!IsPlusOne<Expr>(), Exp<Expr>> {
+    -> enable_if_t<!IsPlusOne<Expr>(), Exp<Expr>> {
   return {expr};
 }
 

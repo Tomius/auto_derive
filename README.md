@@ -23,6 +23,13 @@ int main() {
 }
 ```
 
+It will results this output: ```
+derive(atan2(pow(abs(y+x),pow(sqrt(abs(sinh(x)+2)),2.3)),sin(x)/x), y) = pow(
+abs(y+x),pow(sqrt(abs(sinh(x)+2)),2.3)-1)*pow(sqrt(abs(sinh(x)+2)),2.3)*(y+x)/
+abs(y+x)*sin(x)/x/(sin(x)/x*sin(x)/x)/(pow(abs(y+x),pow(sqrt(abs(sinh(x)+2)),
+2.3))/(sin(x)/x)*pow(abs(y+x),pow(sqrt(abs(sinh(x)+2)),2.3))/(sin(x)/x)+1)
+```
+
 For more details see ```how_to_use.cpp```.
 
 ----------------------

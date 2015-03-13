@@ -35,7 +35,7 @@ class Divide : public BinaryOperator<Lhs, Rhs> {
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator/(Lhs const& lhs, Rhs const& rhs)
-    -> std::enable_if_t<
+    -> enable_if_t<
       (IsFunction<Lhs>() && !IsOne<Rhs>())
       || (IsFunction<Rhs>() && !IsZero<Lhs>()),
     Divide<Lhs, Rhs>> {
@@ -44,13 +44,13 @@ constexpr auto operator/(Lhs const& lhs, Rhs const& rhs)
 
 template<typename Lhs, typename T>
 constexpr auto operator/(Lhs const& lhs, PlusOne<T> rhs)
-    -> std::enable_if_t<!IsZero<Lhs>(), Lhs> {
+    -> enable_if_t<!IsZero<Lhs>(), Lhs> {
   return lhs;
 }
 
 template<typename Lhs, typename T>
 constexpr auto operator/(Lhs const& lhs, MinusOne<T> rhs)
-    -> std::enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
+    -> enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
   return -lhs;
 }
 

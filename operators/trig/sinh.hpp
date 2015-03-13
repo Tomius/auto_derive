@@ -20,7 +20,7 @@ class Sinh : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr std::enable_if_t<!IsZero<T>(), Sinh<T>> sinh(T t) {
+constexpr enable_if_t<!IsZero<T>(), Sinh<T>> sinh(T t) {
   return Sinh<T>(t);
 }
 

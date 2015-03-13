@@ -1,14 +1,7 @@
 #ifndef PARENTHESIS_HPP_
 #define PARENTHESIS_HPP_
 
-// libstdc++-4.8, c++1y mode bug fix
-#include <stdio.h>
-#undef gets
-char *gets(char *p) {
-  scanf("%[^\n]%*c", p);
-  return p;
-}
-
+#include "./cpp14.hpp"
 #include <iostream>
 #include <type_traits>
 
@@ -34,7 +27,7 @@ class PrecedenceAwarePrinter {
       : os_(os), context_(context) {}
 
   template<typename T>
-  std::enable_if_t<HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
+  enable_if_t<HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
   operator<<(const T& t) const {
     if (t.precendence > context_.precendence) {
       os_ << '(' << t << ')';
@@ -46,7 +39,7 @@ class PrecedenceAwarePrinter {
   }
 
   template<typename T>
-  std::enable_if_t<!HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
+  enable_if_t<!HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
   operator<<(const T& t) const {
     os_ << t;
     return *this;

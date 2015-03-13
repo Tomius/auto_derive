@@ -29,7 +29,7 @@ class Atan2 : public BinaryOperator<Lhs, Rhs> {
 
 template<typename Lhs, typename Rhs>
 constexpr auto atan2(Lhs const& lhs, Rhs const& rhs)
-    -> std::enable_if_t<!IsZero<Lhs>(), Atan2<Lhs, Rhs>> {
+    -> enable_if_t<!IsZero<Lhs>(), Atan2<Lhs, Rhs>> {
   return {lhs, rhs};
 }
 

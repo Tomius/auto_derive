@@ -14,7 +14,7 @@ class BinaryOperator;
 
 template<typename Lhs, typename Rhs>
 class BinaryOperator<Lhs, Rhs,
-    std::enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
+    enable_if_t<IsExpression<Lhs>() && IsExpression<Rhs>()>>
     : public Function {
  public:
   constexpr BinaryOperator(Lhs const& lhs, Rhs const& rhs)
@@ -30,7 +30,7 @@ class BinaryOperator<Lhs, Rhs,
 
 template<typename Lhs, typename Rhs>
 class BinaryOperator<Lhs, Rhs,
-    std::enable_if_t<!IsExpression<Lhs>() && IsExpression<Rhs>()>>
+    enable_if_t<!IsExpression<Lhs>() && IsExpression<Rhs>()>>
     : public Function {
  private:
 #if AUTO_DERIVE_PROMOTE_INTEGRAL_CONSTANTS
@@ -53,7 +53,7 @@ class BinaryOperator<Lhs, Rhs,
 
 template<typename Lhs, typename Rhs>
 class BinaryOperator<Lhs, Rhs,
-    std::enable_if_t<IsExpression<Lhs>() && !IsExpression<Rhs>()>>
+    enable_if_t<IsExpression<Lhs>() && !IsExpression<Rhs>()>>
     : public Function {
  private:
 #if AUTO_DERIVE_PROMOTE_INTEGRAL_CONSTANTS

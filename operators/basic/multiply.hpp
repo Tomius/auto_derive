@@ -35,7 +35,7 @@ class Multiply : public BinaryOperator<Lhs, Rhs> {
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator*(Lhs const& lhs, Rhs const& rhs)
-    -> std::enable_if_t<
+    -> enable_if_t<
         (IsFunction<Lhs>() && !IsOne<Rhs>() && !IsZero<Rhs>())
         || (IsFunction<Rhs>() && !IsOne<Lhs>() && !IsZero<Lhs>()),
     Multiply<Lhs, Rhs>> {
@@ -44,13 +44,13 @@ constexpr auto operator*(Lhs const& lhs, Rhs const& rhs)
 
 template<typename Lhs, typename T>
 constexpr auto operator*(Lhs const& lhs, PlusOne<T> rhs)
-    -> std::enable_if_t<!IsZero<Lhs>(), Lhs> {
+    -> enable_if_t<!IsZero<Lhs>(), Lhs> {
   return lhs;
 }
 
 template<typename T, typename Rhs>
 constexpr auto operator*(PlusOne<T> lhs, Rhs const& rhs)
-    -> std::enable_if_t<!IsZero<Rhs>(), Rhs> {
+    -> enable_if_t<!IsZero<Rhs>(), Rhs> {
   return rhs;
 }
 
@@ -61,13 +61,13 @@ constexpr auto operator*(PlusOne<T> lhs, PlusOne<U> rhs) {
 
 template<typename Lhs, typename T>
 constexpr auto operator*(Lhs const& lhs, MinusOne<T> rhs)
-    -> std::enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
+    -> enable_if_t<!IsZero<Lhs>(), decltype(-lhs)> {
   return -lhs;
 }
 
 template<typename T, typename Rhs>
 constexpr auto operator*(MinusOne<T> lhs, Rhs const& rhs)
-    -> std::enable_if_t<!IsZero<Rhs>(), decltype(-rhs)> {
+    -> enable_if_t<!IsZero<Rhs>(), decltype(-rhs)> {
   return -rhs;
 }
 

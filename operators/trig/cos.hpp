@@ -20,7 +20,7 @@ class Cos : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr std::enable_if_t<!IsZero<T>(), Cos<T>> cos(T t) {
+constexpr enable_if_t<!IsZero<T>(), Cos<T>> cos(T t) {
   return Cos<T>(t);
 }
 

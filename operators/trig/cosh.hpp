@@ -21,7 +21,7 @@ class Cosh : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr std::enable_if_t<!IsZero<T>(), Cosh<T>> cosh(T t) {
+constexpr enable_if_t<!IsZero<T>(), Cosh<T>> cosh(T t) {
   return Cosh<T>(t);
 }
 

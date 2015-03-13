@@ -178,6 +178,9 @@ void integers() {
   ASSERT_EQUALS(derive(g2, x)(x=1, y=2), -0.64);
 }
 
+// the <complex> header doesn't compile with libstdc++-4.8
+// in C++1y mode, so it is not included by default
+#ifdef AUTO_DERIVE_COMPLEX_TESTS
 void complex_variables() {
   using Complex = std::complex<double>;
 
@@ -197,6 +200,7 @@ void complex_variables() {
   // Basically this library works on any user-defined type, as long as it has
   // the required function overloads for the used operators.
 }
+#endif
 
 int main() {
   functions();
@@ -208,5 +212,7 @@ int main() {
   higher_order_functions();
   simplifications();
   integers();
+#ifdef AUTO_DERIVE_COMPLEX_TESTS
   complex_variables();
+#endif
 }

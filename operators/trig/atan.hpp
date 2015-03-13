@@ -28,7 +28,7 @@ class Atan : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr std::enable_if_t<!IsZero<T>(), Atan<T>> atan(T t) {
+constexpr enable_if_t<!IsZero<T>(), Atan<T>> atan(T t) {
   return Atan<T>(t);
 }
 

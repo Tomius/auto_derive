@@ -28,7 +28,7 @@ class Abs : public UnaryOperator<Expr> {
 };
 
 template<typename Expr>
-constexpr std::enable_if_t<IsFunction<Expr>(), Abs<Expr>> abs(Expr const& expr) {
+constexpr enable_if_t<IsFunction<Expr>(), Abs<Expr>> abs(Expr const& expr) {
   return {expr};
 }
 
