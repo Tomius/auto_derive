@@ -15,11 +15,11 @@ int main() {
 
   constexpr auto f = atan2(pow(abs(y+x), pow(sqrt(abs(sinh(x)+2)), 2.3)), sin(x)/x);
 
-  constexpr auto dgdy = derive(g, y);
+  constexpr auto dfdy = derive(f, y);
 
-  double eval = dgdy(x=2, y=4.2);
+  double dfdy_evaluated = dfdy(x=2, y=4.2);
 
-  std::cout << "derive(" << g << ", " << y << ") = " << dgdy << std::endl;
+  std::cout << "derive(" << f << ", " << y << ") = " << dfdy << std::endl;
 }
 ```
 
