@@ -1,7 +1,7 @@
 Auto derive
 ===========
 
-This is a C++14 library offering a way to compile-time derive a mathematical function, so run-time only the derivative is exectued. This technique is called
+This is a C++14 library offering a way to compile-time derive a mathematical function, so run-time only the derivative is executed. This technique is called
 [Automatic differentiation](http://en.wikipedia.org/wiki/Automatic_differentiation), hence the name of the lib.
 
 Example:
