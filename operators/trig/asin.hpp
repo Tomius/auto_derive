@@ -29,7 +29,7 @@ class Asin : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr enable_if_t<!IsZero<T>(), Asin<T>> asin(T t) {
+constexpr std::enable_if_t<!IsZero<T>(), Asin<T>> asin(T t) {
   return Asin<T>(t);
 }
 

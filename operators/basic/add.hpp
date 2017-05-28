@@ -29,7 +29,7 @@ class Add : public BinaryOperator<Lhs, Rhs> {
 
 template<typename Lhs, typename Rhs>
 constexpr auto operator+(Lhs const& lhs, Rhs const& rhs)
-    -> enable_if_t<(
+    -> std::enable_if_t<(
       IsFunction<Lhs>() && !IsZero<Rhs>())
       || (IsFunction<Rhs>() && !IsZero<Lhs>()),
     Add<Lhs, Rhs>> {

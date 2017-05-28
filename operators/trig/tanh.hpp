@@ -29,7 +29,7 @@ class Tanh : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr enable_if_t<!IsZero<T>(), Tanh<T>> tanh(T t) {
+constexpr std::enable_if_t<!IsZero<T>(), Tanh<T>> tanh(T t) {
   return Tanh<T>(t);
 }
 

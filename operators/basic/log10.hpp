@@ -28,7 +28,7 @@ class Log10 : public UnaryOperator<Expr> {
 };
 
 template<typename Expr>
-constexpr enable_if_t<!IsPlusOne<Expr>(), Log10<Expr>> log10(Expr const& expr) {
+constexpr std::enable_if_t<!IsPlusOne<Expr>(), Log10<Expr>> log10(Expr const& expr) {
   return {expr};
 }
 

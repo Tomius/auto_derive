@@ -27,7 +27,7 @@ class Tan : public UnaryOperator<Expr> {
 };
 
 template <typename T>
-constexpr enable_if_t<!IsZero<T>(), Tan<T>> tan(T t) {
+constexpr std::enable_if_t<!IsZero<T>(), Tan<T>> tan(T t) {
   return Tan<T>(t);
 }
 

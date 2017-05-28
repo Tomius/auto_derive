@@ -1,7 +1,6 @@
 #ifndef PARENTHESIS_HPP_
 #define PARENTHESIS_HPP_
 
-#include "./cpp14.hpp"
 #include <iostream>
 #include <type_traits>
 
@@ -27,7 +26,7 @@ class PrecedenceAwarePrinter {
       : os_(os), context_(context) {}
 
   template<typename T>
-  enable_if_t<HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
+  std::enable_if_t<HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
   operator<<(const T& t) const {
     if (t.precendence > context_.precendence) {
       os_ << '(' << t << ')';
@@ -39,7 +38,7 @@ class PrecedenceAwarePrinter {
   }
 
   template<typename T>
-  enable_if_t<!HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
+  std::enable_if_t<!HasPrecedence<T>::value, PrecedenceAwarePrinter const&>
   operator<<(const T& t) const {
     os_ << t;
     return *this;

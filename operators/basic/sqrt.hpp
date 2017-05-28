@@ -26,7 +26,7 @@ class Sqrt : public UnaryOperator<Expr> {
 
 template<typename Expr>
 constexpr auto sqrt(Expr const& expr)
-    -> enable_if_t<!IsZero<Expr>() && !IsPlusOne<Expr>(), Sqrt<Expr>> {
+    -> std::enable_if_t<!IsZero<Expr>() && !IsPlusOne<Expr>(), Sqrt<Expr>> {
   return {expr};
 }
 

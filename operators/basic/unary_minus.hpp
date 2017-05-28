@@ -29,7 +29,7 @@ class UnaryMinus : public UnaryOperator<Expr> {
 
 template<typename Expr>
 constexpr auto operator-(Expr const& expr)
-    -> enable_if_t<IsFunction<Expr>(), UnaryMinus<Expr>> {
+    -> std::enable_if_t<IsFunction<Expr>(), UnaryMinus<Expr>> {
   return {expr};
 }
 
