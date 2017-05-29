@@ -13,6 +13,7 @@
 #include "basic/square.hpp"
 #include "basic/subtract.hpp"
 #include "basic/unary_minus.hpp"
+#include "basic/erf.hpp"
 
 #include "trig/sin.hpp"
 #include "trig/cos.hpp"
