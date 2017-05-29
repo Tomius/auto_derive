@@ -13,22 +13,21 @@ int main() {
   AUTO_DERIVE_VARIABLE(double, x);
   AUTO_DERIVE_VARIABLE(double, y);
 
-  constexpr auto f = atan2(pow(abs(y+x), pow(sqrt(abs(sinh(x)+2)), 2.3)), sin(x)/x);
+  constexpr auto f = pow(x+y, 3) - 2*x*y;
 
   constexpr auto dfdy = derive(f, y);
 
   double dfdy_evaluated = dfdy(x=2, y=4.2);
 
   std::cout << "derive(" << f << ", " << y << ") = " << dfdy << std::endl;
+  std::cout << dfdy << " if x=2 and y=4.2 is " << dfdy_evaluated << std::endl;
 }
 ```
 
-It will result the following output: 
+It will result the following output:
 ``` C++
-derive(atan2(pow(abs(y+x),pow(sqrt(abs(sinh(x)+2)),2.3)),sin(x)/x), y) = pow(
-abs(y+x),pow(sqrt(abs(sinh(x)+2)),2.3)-1)*pow(sqrt(abs(sinh(x)+2)),2.3)*(y+x)/
-abs(y+x)*sin(x)/x/(sin(x)/x*sin(x)/x)/(pow(abs(y+x),pow(sqrt(abs(sinh(x)+2)),
-2.3))/(sin(x)/x)*pow(abs(y+x),pow(sqrt(abs(sinh(x)+2)),2.3))/(sin(x)/x)+1)
+derive(pow(x+y,3)-2*x*y, y) = 3*pow(x+y,2)-2*x
+3*pow(x+y,2)-2*x if x=2 and y=4.2 is 111.32
 ```
 
 For more details see ```how_to_use.cpp```.
