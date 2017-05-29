@@ -29,13 +29,13 @@ class Erf : public UnaryOperator<Expr> {
 };
 
 template<typename Expr>
-constexpr std::enable_if_t<!IsPlusOne<Expr>(), Erf<Expr>> erf(Expr const& expr) {
+constexpr std::enable_if_t<!IsZero<Expr>(), Erf<Expr>> erf(Expr const& expr) {
   return {expr};
 }
 
 template<typename T>
-constexpr Zero<T> erf(PlusOne<T> expr) {
-  return {expr};
+constexpr Zero<T> erf(Zero<T> expr) {
+  return Zero<T>{};
 }
 
 } // namespace auto_derive
