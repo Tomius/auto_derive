@@ -31,6 +31,3 @@ derive(pow(x+y,3)-2*x*y, y) = 3*pow(x+y,2)-2*x
 ```
 
 For more details see ```how_to_use.cpp```.
-
-----------------------
-If you have any problem, please post in the issues tab or mail me at icyplusplus@gmail.com. Any feedback would be appreciated.
